@@ -1,0 +1,6 @@
+name: Skywars
+version: '${project.version}'
+main: me.fodded.skywars.Main
+commands:
+  gm:
+  rank:
