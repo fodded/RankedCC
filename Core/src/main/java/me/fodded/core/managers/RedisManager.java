@@ -1,6 +1,7 @@
 package me.fodded.core.managers;
 
 import me.fodded.core.Core;
+import me.fodded.core.managers.configs.ConfigLoader;
 import org.bukkit.Bukkit;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -31,7 +32,10 @@ public class RedisManager {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxTotal(Integer.MAX_VALUE);
 
-        Core.getInstance().setJedisPool(new JedisPool(jedisPoolConfig, "localhost", 6379));
+        String host = ConfigLoader.getInstance().getConfig("core-config.yml").getString("redis-ip");
+        int port = ConfigLoader.getInstance().getConfig("core-config.yml").getInt("redis-port");
+
+        Core.getInstance().setJedisPool(new JedisPool(jedisPoolConfig, host, port));
     }
 
     public static RedisManager getInstance() {

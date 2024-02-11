@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fodded.core.managers.ranks.RankType;
 import me.fodded.core.managers.stats.Statistics;
+import me.fodded.core.managers.stats.loaders.StatisticsDatabaseLoader;
 import me.fodded.core.managers.stats.loaders.StatisticsRedisLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -52,12 +53,16 @@ public class GeneralStats extends Statistics {
             return generalStatsMap.get(uniqueId);
         }
 
-        GeneralStats generalStats = (GeneralStats) new StatisticsRedisLoader().loadStatistics(uniqueId, GeneralStats.class);
+        GeneralStats generalStats = (GeneralStats) StatisticsRedisLoader.getInstance().loadStatistics(uniqueId, GeneralStats.class);
         if(generalStats != null) {
             generalStatsMap.put(uniqueId, generalStats);
             return generalStats;
         }
 
         return new GeneralStats(uniqueId);
+    }
+
+    public void removeStatistics() {
+        generalStatsMap.remove(uniqueId);
     }
 }

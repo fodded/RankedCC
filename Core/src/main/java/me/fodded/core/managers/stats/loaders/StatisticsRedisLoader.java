@@ -12,6 +12,11 @@ import java.util.UUID;
 
 public class StatisticsRedisLoader implements IStatisticsLoader {
 
+    private static StatisticsRedisLoader instance;
+    public StatisticsRedisLoader() {
+        instance = this;
+    }
+
     @Override
     public void uploadStatistics(UUID uniqueId, Statistics statistics) {
         Bukkit.getScheduler().runTaskAsynchronously(Core.getInstance().getPlugin(), () -> {
@@ -22,8 +27,7 @@ public class StatisticsRedisLoader implements IStatisticsLoader {
                 String json = gson.toJson(statistics);
 
                 jedis = Core.getInstance().getJedisPool().getResource();
-                jedis.set(statistics.getClass().getName() + ":" + uniqueId.toString(), json);
-                System.out.println("uploaded " + json);
+                jedis.set(statistics.getClass().getSimpleName() + ":" + uniqueId.toString(), json);
             } finally {
                 assert jedis != null;
                 jedis.close();
@@ -47,15 +51,23 @@ public class StatisticsRedisLoader implements IStatisticsLoader {
                     .create();
 
             jedis = Core.getInstance().getJedisPool().getResource();
-            if(!jedis.exists(statisticsClass.getName() + ":" + uniqueId.toString())) {
+            if(!jedis.exists(statisticsClass.getSimpleName() + ":" + uniqueId.toString())) {
                 return null;
             }
 
-            String serializedPlayerData = jedis.get(statisticsClass.getName() + ":" + uniqueId);
+            String serializedPlayerData = jedis.get(statisticsClass.getSimpleName() + ":" + uniqueId);
             return (Statistics) gson.fromJson(serializedPlayerData, statisticsClass);
         } finally {
             assert jedis != null;
             jedis.close();
         }
+    }
+
+    public static StatisticsRedisLoader getInstance() {
+        if(instance == null) {
+            return new StatisticsRedisLoader();
+        }
+
+        return instance;
     }
 }

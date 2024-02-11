@@ -1,0 +1,6 @@
+server: server-60
+
+redis-port: 6379
+redis-ip: localhost
+
+mongodb-connection: connection-url
