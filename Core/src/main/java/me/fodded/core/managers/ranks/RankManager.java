@@ -19,13 +19,13 @@ public class RankManager {
 
     public void initializeRanks() {
         ranksList.add(new Rank(RankType.DEFAULT, "&7", 0));
-        ranksList.add(new Rank(RankType.VIP, "&aVIP ", 1));
-        ranksList.add(new Rank(RankType.VIPPLUS, "&aVIP&6+ &a", 2));
-        ranksList.add(new Rank(RankType.MVP, "&bMVP ", 3));
-        ranksList.add(new Rank(RankType.MVPPLUS, "&bMVP&c+ &b", 4));
-        ranksList.add(new Rank(RankType.HELPER, "&9HELPER ", 5));
-        ranksList.add(new Rank(RankType.MODERATOR, "&2MODERATOR ", 6));
-        ranksList.add(new Rank(RankType.ADMIN, "&cADMIN ", 7));
+        ranksList.add(new Rank(RankType.VIP, "&a[VIP] ", 1));
+        ranksList.add(new Rank(RankType.VIPPLUS, "&a[VIP&6+&a] ", 2));
+        ranksList.add(new Rank(RankType.MVP, "&b[MVP] ", 3));
+        ranksList.add(new Rank(RankType.MVPPLUS, "&b[MVP&c+&b] ", 4));
+        ranksList.add(new Rank(RankType.HELPER, "&9[HELPER] ", 5));
+        ranksList.add(new Rank(RankType.MODERATOR, "&2[MODERATOR] ", 6));
+        ranksList.add(new Rank(RankType.ADMIN, "&c[ADMIN] ", 7));
     }
 
     private int getPriority(RankType rankType) {
@@ -43,7 +43,7 @@ public class RankManager {
             return true;
         }
 
-        GeneralStats statistics = new GeneralStats(uniqueId).getStatistics(uniqueId);
+        GeneralStats statistics = new GeneralStats().getStatistics(uniqueId, false);
 
         int playerPriority = getPriority(statistics.getRank());
         int requiredPriority = getPriority(rank);

@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fodded.core.managers.ranks.RankType;
 import me.fodded.core.managers.stats.Statistics;
-import me.fodded.core.managers.stats.loaders.StatisticsDatabaseLoader;
-import me.fodded.core.managers.stats.loaders.StatisticsRedisLoader;
+import me.fodded.core.managers.stats.loaders.DatabaseLoader;
+import me.fodded.core.managers.stats.loaders.RedisLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -15,8 +15,6 @@ import java.util.UUID;
 
 @Getter @Setter
 public class GeneralStats extends Statistics {
-
-    private static HashMap<UUID, GeneralStats> generalStatsMap = new HashMap<>();
 
     @SerializedName("uniqueId")
     private UUID uniqueId;
@@ -43,26 +41,19 @@ public class GeneralStats extends Statistics {
 
         this.chatEnabled = true;
         this.playersVisibility = true;
-
-        generalStatsMap.put(uniqueId, this);
     }
 
     @Override
-    public GeneralStats getStatistics(UUID uniqueId) {
-        if(generalStatsMap.containsKey(uniqueId)) {
-            return generalStatsMap.get(uniqueId);
+    public GeneralStats getStatistics(UUID uniqueId, boolean loadFromDatabase) {
+        if(loadFromDatabase) {
+            return (GeneralStats) DatabaseLoader.getInstance().loadStatistics(uniqueId, GeneralStats.class);
         }
 
-        GeneralStats generalStats = (GeneralStats) StatisticsRedisLoader.getInstance().loadStatistics(uniqueId, GeneralStats.class);
+        GeneralStats generalStats = (GeneralStats) RedisLoader.getInstance().loadStatistics(uniqueId, GeneralStats.class);
         if(generalStats != null) {
-            generalStatsMap.put(uniqueId, generalStats);
             return generalStats;
         }
 
         return new GeneralStats(uniqueId);
-    }
-
-    public void removeStatistics() {
-        generalStatsMap.remove(uniqueId);
     }
 }

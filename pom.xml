@@ -11,6 +11,7 @@
     <modules>
         <module>Core</module>
         <module>Skywars</module>
+        <module>BungeeCord</module>
     </modules>
 
     <properties>

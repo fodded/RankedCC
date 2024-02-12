@@ -4,3 +4,4 @@ main: me.fodded.skywars.Main
 commands:
   gm:
   rank:
+  stats:

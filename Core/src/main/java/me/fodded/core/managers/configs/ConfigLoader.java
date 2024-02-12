@@ -1,6 +1,5 @@
 package me.fodded.core.managers.configs;
 
-import lombok.Getter;
 import me.fodded.core.Core;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.file.FileConfiguration;

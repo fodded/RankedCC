@@ -1,6 +1,12 @@
-server: server-60
+# The server's name needed to be shown in the menu and store amount of players
+# The name should be unique
+# For example Skywars-Lobby-1
+# Although all Game servers must contain "Game" in their name and all Lobby server must contain "Lobby"
+server: server
 
+# If you're running redis on the same machine you have the server, then just leave the values as they are here
 redis-port: 6379
 redis-ip: localhost
 
+# You need to insert here your connection link from mongodb to store player's statistics
 mongodb-connection: connection-url

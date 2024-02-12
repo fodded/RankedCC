@@ -3,6 +3,7 @@ package me.fodded.core.commands;
 import lombok.Getter;
 import me.fodded.core.commands.impl.GameModeCommand;
 import me.fodded.core.commands.impl.RankCommand;
+import me.fodded.core.commands.impl.StatsCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class CommandManager {
     public void initializeCommands() {
         commandsList.add(new GameModeCommand());
         commandsList.add(new RankCommand());
+        commandsList.add(new StatsCommand());
     }
 
     public static CommandManager getInstance() {

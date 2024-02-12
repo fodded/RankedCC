@@ -8,8 +8,6 @@ import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
-
 @CommandInfo(rank = RankType.ADMIN, name = "gm", usage = "/gm [1-3]", description = "shortened gamemode command")
 public class GameModeCommand extends PluginCommand {
 

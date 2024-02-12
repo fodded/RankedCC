@@ -6,10 +6,12 @@ import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.ranks.RankManager;
 import me.fodded.core.managers.ranks.RankType;
 import me.fodded.core.managers.stats.impl.GeneralStats;
+import me.fodded.core.managers.stats.loaders.RedisLoader;
 import me.fodded.core.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 @CommandInfo(rank = RankType.ADMIN, name = "rank", usage = "/rank [player] set/info", description = "Manage ranks")
 public class RankCommand extends PluginCommand {
@@ -23,11 +25,14 @@ public class RankCommand extends PluginCommand {
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
         if(!offlinePlayer.hasPlayedBefore()) {
-            sender.sendMessage(StringUtils.format("&cThe player " + args[0] + " has never played on the server before"));
-            return;
+            Player player = Bukkit.getPlayer(args[0]);
+            if(player == null) {
+                sender.sendMessage(StringUtils.format("&cThe player " + args[0] + " has never played on the server before"));
+                return;
+            }
         }
 
-        GeneralStats generalStats = new GeneralStats().getStatistics(offlinePlayer.getUniqueId());
+        GeneralStats generalStats = new GeneralStats().getStatistics(offlinePlayer.getUniqueId(), false);
         switch(args[1]) {
             case "set":
                 if(args.length < 3) {
@@ -39,6 +44,7 @@ public class RankCommand extends PluginCommand {
                 sender.sendMessage(StringUtils.format("&aYou've given rank " + rankToGive + " to " + offlinePlayer.getName()));
 
                 generalStats.setRank(rankToGive);
+                RedisLoader.getInstance().uploadStatistics(offlinePlayer.getUniqueId(), generalStats);
                 break;
             case "info":
                 Rank rank = RankManager.getInstance().getRank(generalStats.getRank());

@@ -1,10 +1,12 @@
 package me.fodded.skywars.managers.stats;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 import me.fodded.core.managers.stats.Statistics;
 import me.fodded.core.managers.stats.impl.GeneralStats;
-import me.fodded.core.managers.stats.loaders.StatisticsRedisLoader;
+import me.fodded.core.managers.stats.loaders.DatabaseLoader;
+import me.fodded.core.managers.stats.loaders.RedisLoader;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -12,8 +14,7 @@ import java.util.UUID;
 @Getter @Setter
 public class SkywarsStats extends Statistics {
 
-    private static HashMap<UUID, SkywarsStats> skywarsStatsMap = new HashMap<>();
-
+    @SerializedName("uniqueId")
     private UUID uniqueId;
 
     private int wins, kills, losses, deaths;
@@ -28,16 +29,16 @@ public class SkywarsStats extends Statistics {
     }
 
     @Override
-    public SkywarsStats getStatistics(UUID uniqueId) {
-        if(skywarsStatsMap.containsKey(uniqueId)) {
-            return skywarsStatsMap.get(uniqueId);
+    public SkywarsStats getStatistics(UUID uniqueId, boolean loadFromDatabase) {
+        if(loadFromDatabase) {
+            return (SkywarsStats) DatabaseLoader.getInstance().loadStatistics(uniqueId, SkywarsStats.class);
         }
 
-        SkywarsStats skywarsStats = (SkywarsStats) new StatisticsRedisLoader().loadStatistics(uniqueId, SkywarsStats.class);
-        if(skywarsStats == null) {
-            skywarsStats = new SkywarsStats(uniqueId);
+        SkywarsStats skywarsStats = (SkywarsStats) RedisLoader.getInstance().loadStatistics(uniqueId, SkywarsStats.class);
+        if(skywarsStats != null) {
+            return skywarsStats;
         }
 
-        return skywarsStats;
+        return new SkywarsStats(uniqueId);
     }
 }
