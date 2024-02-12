@@ -1,8 +1,5 @@
 package me.fodded.core.managers.stats;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
 import lombok.Getter;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;

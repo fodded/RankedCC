@@ -1,7 +1,6 @@
 package me.fodded.bungeecord.listeners;
 
 
-import me.fodded.core.managers.stats.Redis;
 import me.fodded.core.managers.stats.impl.GeneralStats;
 import me.fodded.core.managers.stats.loaders.DatabaseLoader;
 import me.fodded.core.managers.stats.loaders.RedisLoader;
@@ -19,9 +18,8 @@ public class PlayerConnectListener implements Listener {
     public void onPlayerJoin(PostLoginEvent event) {
         // load statistics from the database and put it in redis
         ForkJoinPool.commonPool().submit(() -> {
-            GeneralStats generalStats = new GeneralStats().getStatistics(event.getPlayer().getUniqueId(), true);
+            GeneralStats generalStats = new GeneralStats().getStatisticsFromDatabase(event.getPlayer().getUniqueId());
             RedisLoader.getInstance().uploadStatistics(event.getPlayer().getUniqueId(), generalStats);
-
             // We need this part to load ALL possible statistics (Sw, Bw, etc...)
             RedisOperations.getInstance().publishData("loadData", event.getPlayer().getUniqueId().toString());
         });
@@ -31,7 +29,7 @@ public class PlayerConnectListener implements Listener {
     public void onPlayerQuit(PlayerDisconnectEvent event) {
         // upload statistics to the database and remove from redis
         ForkJoinPool.commonPool().submit(() -> {
-            GeneralStats generalStats = new GeneralStats().getStatistics(event.getPlayer().getUniqueId(), false);
+            GeneralStats generalStats = new GeneralStats().getStatisticsFromRedis(event.getPlayer().getUniqueId());
             DatabaseLoader.getInstance().uploadStatistics(event.getPlayer().getUniqueId(), generalStats);
             // We need this part to upload ALL possible statistics to the db (Sw, Bw, etc...)
             RedisOperations.getInstance().publishData("uploadData", event.getPlayer().getUniqueId().toString());

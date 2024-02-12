@@ -1,5 +1,6 @@
 package me.fodded.core.managers.ranks;
 
+import lombok.Getter;
 import me.fodded.core.managers.stats.impl.GeneralStats;
 import org.bukkit.Bukkit;
 
@@ -11,6 +12,7 @@ import java.util.UUID;
 public class RankManager {
 
     private static RankManager instance;
+    @Getter
     private final List<Rank> ranksList = new ArrayList<>();
 
     public RankManager() {
@@ -43,7 +45,7 @@ public class RankManager {
             return true;
         }
 
-        GeneralStats statistics = new GeneralStats().getStatistics(uniqueId, false);
+        GeneralStats statistics = new GeneralStats().getStatisticsFromRedis(uniqueId);
 
         int playerPriority = getPriority(statistics.getRank());
         int requiredPriority = getPriority(rank);

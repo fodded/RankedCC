@@ -23,6 +23,9 @@ public class RedisLoader implements IStatisticsLoader {
             Gson gson = new GsonBuilder().create();
             String json = gson.toJson(statistics);
 
+            System.out.println("uploaded to redis");
+            System.out.println(json);
+
             jedis = Redis.getInstance().getJedisPool().getResource();
             jedis.set(statistics.getClass().getSimpleName() + ":" + uniqueId.toString(), json);
         } finally {

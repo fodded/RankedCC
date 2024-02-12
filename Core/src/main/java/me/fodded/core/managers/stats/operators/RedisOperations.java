@@ -1,17 +1,26 @@
 package me.fodded.core.managers.stats.operators;
 
-import lombok.Getter;
-import lombok.Setter;
 import me.fodded.core.managers.stats.Redis;
-import redis.clients.jedis.*;
-
-import java.util.Set;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 public class RedisOperations {
     private static RedisOperations instance;
 
     public RedisOperations() {
         instance = this;
+    }
+
+    public boolean isKeyPresent(String key) {
+        Jedis jedis = null;
+        try {
+            jedis = Redis.getInstance().getJedisPool().getResource();
+            return jedis.exists(key);
+        } finally {
+            assert jedis != null;
+            jedis.close();
+        }
     }
 
     public void insertData(String key, String value) {

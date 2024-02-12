@@ -4,11 +4,9 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 import me.fodded.core.managers.stats.Statistics;
-import me.fodded.core.managers.stats.impl.GeneralStats;
 import me.fodded.core.managers.stats.loaders.DatabaseLoader;
 import me.fodded.core.managers.stats.loaders.RedisLoader;
 
-import java.util.HashMap;
 import java.util.UUID;
 
 @Getter @Setter
@@ -29,16 +27,29 @@ public class SkywarsStats extends Statistics {
     }
 
     @Override
-    public SkywarsStats getStatistics(UUID uniqueId, boolean loadFromDatabase) {
-        if(loadFromDatabase) {
-            return (SkywarsStats) DatabaseLoader.getInstance().loadStatistics(uniqueId, SkywarsStats.class);
-        }
-
+    public SkywarsStats getStatisticsFromRedis(UUID uniqueId) {
         SkywarsStats skywarsStats = (SkywarsStats) RedisLoader.getInstance().loadStatistics(uniqueId, SkywarsStats.class);
         if(skywarsStats != null) {
             return skywarsStats;
         }
 
         return new SkywarsStats(uniqueId);
+    }
+
+    @Override
+    public SkywarsStats getStatisticsFromDatabase(UUID uniqueId) {
+        SkywarsStats skywarsStats = (SkywarsStats) DatabaseLoader.getInstance().loadStatistics(uniqueId, SkywarsStats.class);
+        if(skywarsStats != null) {
+            return skywarsStats;
+        }
+        return new SkywarsStats(uniqueId);
+    }
+
+    @Override
+    public SkywarsStats getStatistics(UUID uniqueId, boolean isPlayerOnline) {
+        if(isPlayerOnline) {
+            return getStatisticsFromRedis(uniqueId);
+        }
+        return getStatisticsFromDatabase(uniqueId);
     }
 }

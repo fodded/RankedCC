@@ -1,15 +1,9 @@
 package me.fodded.core.managers.stats.operators;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import lombok.Getter;
-import lombok.Setter;
 import me.fodded.core.managers.stats.Database;
 import org.bson.Document;
 
-import java.util.Set;
 import java.util.UUID;
 
 public class DatabaseOperations {

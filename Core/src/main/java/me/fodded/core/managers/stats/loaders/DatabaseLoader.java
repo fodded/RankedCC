@@ -2,10 +2,7 @@ package me.fodded.core.managers.stats.loaders;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import me.fodded.core.managers.stats.Database;
 import me.fodded.core.managers.stats.Statistics;
 import org.bson.Document;
@@ -25,8 +22,6 @@ public class DatabaseLoader implements IStatisticsLoader {
 
         Gson gson = new GsonBuilder().create();
         String json = gson.toJson(statistics);
-
-        System.out.println(json);
 
         Document playerDocument = collection.find(new Document("uniqueId", uniqueId.toString())).first();
         if(playerDocument == null) {
