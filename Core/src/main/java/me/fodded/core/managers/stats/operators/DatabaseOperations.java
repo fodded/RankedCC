@@ -1,7 +1,8 @@
 package me.fodded.core.managers.stats.operators;
 
 import com.mongodb.client.MongoCollection;
-import me.fodded.core.managers.stats.Database;
+import me.fodded.core.Core;
+import me.fodded.core.model.Database;
 import org.bson.Document;
 
 import java.util.UUID;
@@ -13,9 +14,10 @@ public class DatabaseOperations {
         instance = this;
     }
 
+    /*
     public Object getStatistic(UUID uniqueId, Class statisticClass, String statistic) {
-        MongoCollection<Document> collection = Database.getInstance()
-                .getMongoDatabase()
+        MongoCollection<Document> collection = Core.getInstance().getDatabase().getMongoClient()
+                .getDatabase("statistics")
                 .getCollection(statisticClass.getClass().getSimpleName());
 
         Document playerDocument = collection.find(new Document("uniqueId", uniqueId.toString())).first();
@@ -27,8 +29,8 @@ public class DatabaseOperations {
     }
 
     public void updateStatistic(UUID uniqueId, String collectionName, String statistic, Object value) {
-        MongoCollection<Document> collection = Database.getInstance()
-                .getMongoDatabase()
+        MongoCollection<Document> collection = Core.getInstance().getDatabase().getMongoClient()
+                .getDatabase("statistics")
                 .getCollection(collectionName);
 
         Document playerDocument = collection.find(new Document("uniqueId", uniqueId.toString())).first();
@@ -52,8 +54,8 @@ public class DatabaseOperations {
     }
 
     public boolean statisticExists(UUID uniqueId, String collectionName, String statistic) {
-        MongoCollection<Document> collection = Database.getInstance()
-                .getMongoDatabase()
+        MongoCollection<Document> collection = Core.getInstance().getDatabase().getMongoClient()
+                .getDatabase("statistics")
                 .getCollection(collectionName);
 
         Document playerDocument = collection.find(new Document("uniqueId", uniqueId.toString())).first();
@@ -62,7 +64,7 @@ public class DatabaseOperations {
         }
 
         return playerDocument.containsKey(statistic);
-    }
+    } */
 
     public static DatabaseOperations getInstance() {
         if(instance == null) {

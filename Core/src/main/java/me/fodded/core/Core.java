@@ -1,60 +1,41 @@
 package me.fodded.core;
 
+import com.google.common.base.Preconditions;
 import lombok.Getter;
-import me.fodded.core.commands.CommandManager;
-import me.fodded.core.listeners.PlayerConnectListener;
-import me.fodded.core.managers.configs.ConfigLoader;
-import me.fodded.core.managers.ranks.RankManager;
-import me.fodded.core.managers.stats.Database;
-import me.fodded.core.managers.stats.Redis;
-import org.bukkit.Server;
-import org.bukkit.plugin.java.JavaPlugin;
+import me.fodded.core.managers.stats.impl.GeneralStats;
+import me.fodded.core.managers.stats.impl.GeneralStatsDataManager;
+import me.fodded.core.model.Database;
+import me.fodded.core.model.Redis;
+import org.redisson.config.Config;
 
+@Getter
 public class Core {
 
     @Getter
-    public static Core instance;
+    private static Core instance;
 
-    @Getter
-    private Server server;
+    private final Redis redis;
+    private final Database database;
 
-    @Getter
-    private JavaPlugin plugin;
+    private final GeneralStatsDataManager generalStatsDataManager;
 
-    @Getter
-    private static final String noPermissionMessage = "&cYou do not have permissions to run that command.";
-
-    @Getter
-    private String serverName;
-
-    public Core(Server server, JavaPlugin plugin) {
+    private Core(String mongodbConnection, Config redisConfig) {
         instance = this;
 
-        this.server = server;
-        this.plugin = plugin;
+        redis = new Redis(redisConfig);
+        database = new Database(mongodbConnection);
+
+        generalStatsDataManager = new GeneralStatsDataManager(
+                database.getMongoDatabase(Database.STATISTICS_DB).getCollection("generalStats", GeneralStats.class),
+                redis.getRedissonClient().getMap("generalStats")
+        );
     }
 
-    public Core() {
-        instance = this;
-
-    }
-
-    public void initializeCore() {
-        ConfigLoader.getInstance().createConfig("core-config.yml");
-        ConfigLoader.getInstance().createConfig("en-lang.yml");
-        ConfigLoader.getInstance().createConfig("ru-lang.yml");
-
-        CommandManager.getInstance().initializeCommands();
-        RankManager.getInstance().initializeRanks();
-
-        serverName = ConfigLoader.getInstance().getConfig("core-config.yml").getString("server");
-
-        String host = ConfigLoader.getInstance().getConfig("core-config.yml").getString("redis-ip");
-        int port = ConfigLoader.getInstance().getConfig("core-config.yml").getInt("redis-port");
-
-        new Redis(host, port);
-        new Database(ConfigLoader.getInstance().getConfig("core-config.yml").getString("mongodb-connection"));
-
-        server.getPluginManager().registerEvents(new PlayerConnectListener(), plugin);
+    public static void initialize(String mongodbConnection, Config redisConfig) {
+        Preconditions.checkState(instance == null, "The core is already initialized");
+        new Core(
+                mongodbConnection,
+                redisConfig
+        );
     }
 }

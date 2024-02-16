@@ -1,72 +1,29 @@
 package me.fodded.core.managers.stats.impl;
 
-import com.google.gson.annotations.SerializedName;
-import lombok.Getter;
-import lombok.Setter;
-import me.fodded.core.managers.ranks.RankType;
-import me.fodded.core.managers.stats.Statistics;
-import me.fodded.core.managers.stats.loaders.DatabaseLoader;
-import me.fodded.core.managers.stats.loaders.RedisLoader;
-import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
+import lombok.Data;
+import me.fodded.core.managers.ranks.Rank;
 
 import java.util.UUID;
 
-@Getter @Setter
-public class GeneralStats extends Statistics {
+@Data
+public class GeneralStats {
 
-    @SerializedName("uniqueId")
-    private UUID uniqueId;
+    private final UUID uniqueId;
+    private Rank rank;
 
-    @SerializedName("rank")
-    private RankType rank;
-
-    private String prefix, displayedName, name, chosenLanguage;
+    private String prefix, displayedName, lastName, chosenLanguage;
     private boolean vanished, logging, playersVisibility, chatEnabled;
 
-    public GeneralStats() {
-
-    }
-
     public GeneralStats(UUID uniqueId) {
-        ProxiedPlayer player = ProxyServer.getInstance().getPlayer(uniqueId);
-
         this.uniqueId = uniqueId;
-        this.rank = RankType.DEFAULT;
+        this.rank = Rank.DEFAULT;
 
         this.prefix = "";
-        this.name = player.getName();
-        this.displayedName = player.getName();
+        this.lastName = "";
+        this.displayedName = "";
         this.chosenLanguage = "ru";
 
         this.chatEnabled = true;
         this.playersVisibility = true;
-    }
-
-    @Override
-    public GeneralStats getStatisticsFromRedis(UUID uniqueId) {
-        GeneralStats generalStats = (GeneralStats) RedisLoader.getInstance().loadStatistics(uniqueId, GeneralStats.class);
-        if(generalStats != null) {
-            return generalStats;
-        }
-        return new GeneralStats(uniqueId);
-    }
-
-    @Override
-    public GeneralStats getStatisticsFromDatabase(UUID uniqueId) {
-        GeneralStats generalStats = (GeneralStats) DatabaseLoader.getInstance().loadStatistics(uniqueId, GeneralStats.class);
-        if(generalStats != null) {
-            return generalStats;
-        }
-
-        return new GeneralStats(uniqueId);
-    }
-
-    @Override
-    public GeneralStats getStatistics(UUID uniqueId, boolean isPlayerOnline) {
-        if(isPlayerOnline) {
-            return getStatisticsFromRedis(uniqueId);
-        }
-        return getStatisticsFromDatabase(uniqueId);
     }
 }
