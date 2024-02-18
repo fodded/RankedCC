@@ -1,9 +1,8 @@
 package me.fodded.core.managers.ranks;
 
 import lombok.Getter;
-import me.fodded.core.Core;
-import me.fodded.core.managers.stats.impl.GeneralStats;
-import me.fodded.core.managers.stats.impl.GeneralStatsDataManager;
+import me.fodded.core.managers.stats.impl.profile.GeneralStats;
+import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 
 import java.util.UUID;
 
@@ -28,7 +27,7 @@ public enum Rank {
     }
 
     public static boolean hasPermission(Rank minimumRank, UUID uniqueId) {
-        GeneralStatsDataManager generalStatsDataManager = Core.getInstance().getGeneralStatsDataManager();
+        GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
         GeneralStats generalStats = generalStatsDataManager.getCachedValue(uniqueId);
 
         int playerPriority = generalStats.getRank().getPriority();

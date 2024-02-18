@@ -1,9 +1,8 @@
 package me.fodded.spigotcore.chat;
 
-import me.fodded.core.Core;
 import me.fodded.core.managers.ranks.Rank;
-import me.fodded.core.managers.stats.impl.GeneralStats;
-import me.fodded.core.managers.stats.impl.GeneralStatsDataManager;
+import me.fodded.core.managers.stats.impl.profile.GeneralStats;
+import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.configs.ConfigLoader;
 import me.fodded.spigotcore.utils.StringUtils;
@@ -34,7 +33,7 @@ public class ChatManager implements Listener {
         Player player = event.getPlayer();
         event.setCancelled(true);
 
-        GeneralStatsDataManager generalStatsDataManager = Core.getInstance().getGeneralStatsDataManager();
+        GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
         GeneralStats generalStats = generalStatsDataManager.getCachedValue(player.getUniqueId());
 
         Rank rank = generalStats.getRank();

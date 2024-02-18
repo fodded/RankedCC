@@ -25,6 +25,24 @@ public class CommandManager {
         commandsList.add(new StatsCommand());
     }
 
+    public void addCommand(PluginCommand command) {
+        commandsList.add(command);
+    }
+
+    public void removeCommand(String commandName) {
+        PluginCommand command = getCommand(commandName);
+        commandsList.remove(command);
+    }
+
+    private PluginCommand getCommand(String name) {
+        for(PluginCommand pluginCommand : commandsList) {
+            if(pluginCommand.getName().equalsIgnoreCase(name)) {
+                return pluginCommand;
+            }
+        }
+        return null;
+    }
+
     public static CommandManager getInstance() {
         if(instance == null) {
             return new CommandManager();

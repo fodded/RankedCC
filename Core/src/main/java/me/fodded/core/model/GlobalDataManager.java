@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class GlobalDataManager<K, V> {
+public abstract class GlobalDataManager<K, V> {
 
     private final MongoCollection<V> mongoCollection;
     private final RMap<K, V> redissonMap;

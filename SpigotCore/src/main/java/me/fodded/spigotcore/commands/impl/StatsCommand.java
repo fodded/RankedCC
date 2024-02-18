@@ -1,7 +1,8 @@
 package me.fodded.spigotcore.commands.impl;
 
 import me.fodded.core.managers.ranks.Rank;
-import me.fodded.core.managers.stats.operators.DatabaseOperations;
+import me.fodded.core.model.DataManager;
+import me.fodded.core.model.GlobalDataManager;
 import me.fodded.spigotcore.commands.CommandInfo;
 import me.fodded.spigotcore.commands.PluginCommand;
 import me.fodded.spigotcore.utils.StringUtils;
@@ -14,36 +15,34 @@ public class StatsCommand extends PluginCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
-        if(args.length == 5) {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
-
-            /*if(!DatabaseOperations.getInstance().collectionExists(args[1])) {
-                sender.sendMessage(StringUtils.format("&cCouldn't find Minigame called " + args[1] + " (The names are case sensetive, for example SkywarsStats)"));
-                return;
-            }
-
-            if(!DatabaseOperations.getInstance().statisticExists(offlinePlayer.getUniqueId(), args[1], args[3])) {
-                sender.sendMessage(StringUtils.format("&cCouldn't find Statistic called " + args[3] + " (The names are case sensetive, for example kills)"));
-                return;
-            }
-
-            // If the player's data is present in redis then we only edit it.
-            // If not, then we edit data directly in the database
-            String key = args[1] + ":" + offlinePlayer.getUniqueId().toString();
-
-            if(RedisOperations.getInstance().isKeyPresent(key)) {
-                key += ":" + args[3] + ":" + args[4];
-                RedisOperations.getInstance().publishData("editData", key);
-                sender.sendMessage(StringUtils.format("&aYou've successfully updated " + args[3] + " to " + args[4] + "&a for " + offlinePlayer.getName()));
-                return;
-            }
-
-            DatabaseOperations.getInstance().updateStatistic(offlinePlayer.getUniqueId(), args[1], args[3], args[4]);
-*/
-            sender.sendMessage(StringUtils.format("&aYou've successfully updated " + args[3] + " to " + args[4] + "&a for " + offlinePlayer.getName()));
+        if(args.length != 5) {
+            sender.sendMessage(StringUtils.format(getUsage()));
             return;
         }
 
-        sender.sendMessage(StringUtils.format(getUsage()));
+        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+        if(!offlinePlayer.hasPlayedBefore()) {
+            sender.sendMessage(StringUtils.format("&cCould not find player " + args[0]));
+            return;
+        }
+
+        GlobalDataManager dataManager = getDataManager(args[1]);
+        if(dataManager == null) {
+            sender.sendMessage(StringUtils.format("&cCouldn't find Minigame called " + args[1] + " (for example SkywarsStats)"));
+            return;
+        }
+
+
+        sender.sendMessage(StringUtils.format("&aYou've successfully updated " + args[3] + " to " + args[4] + "&a for " + offlinePlayer.getName()));
+
+    }
+
+    private GlobalDataManager getDataManager(String dataName) {
+        for(GlobalDataManager dataManager : DataManager.getInstance().getStatisticsList()) {
+            if(dataManager.getClass().getSimpleName().substring(0, 11).equalsIgnoreCase(dataName)) {
+                return dataManager;
+            }
+        }
+        return null;
     }
 }

@@ -1,8 +1,10 @@
-package me.fodded.core.managers.stats.impl;
+package me.fodded.core.managers.stats.impl.profile;
 
 import lombok.Data;
 import me.fodded.core.managers.ranks.Rank;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -13,6 +15,10 @@ public class GeneralStats {
 
     private String prefix, displayedName, lastName, chosenLanguage;
     private boolean vanished, logging, playersVisibility, chatEnabled;
+
+    private long lastLogin, firstLogin;
+
+    private List<UUID> friendList = new LinkedList<>();
 
     public GeneralStats(UUID uniqueId) {
         this.uniqueId = uniqueId;
@@ -25,5 +31,7 @@ public class GeneralStats {
 
         this.chatEnabled = true;
         this.playersVisibility = true;
+
+        this.firstLogin = System.currentTimeMillis();
     }
 }

@@ -1,9 +1,8 @@
 package me.fodded.spigotcore.commands.impl;
 
-import me.fodded.core.Core;
 import me.fodded.core.managers.ranks.Rank;
-import me.fodded.core.managers.stats.impl.GeneralStats;
-import me.fodded.core.managers.stats.impl.GeneralStatsDataManager;
+import me.fodded.core.managers.stats.impl.profile.GeneralStats;
+import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.spigotcore.commands.CommandInfo;
 import me.fodded.spigotcore.commands.PluginCommand;
 import me.fodded.spigotcore.utils.StringUtils;
@@ -58,7 +57,7 @@ public class RankCommand extends PluginCommand {
 
     private void printRankInformation(CommandSender sender, UUID uniqueId) {
         CompletableFuture.runAsync(() -> {
-            GeneralStatsDataManager generalStatsDataManager = Core.getInstance().getGeneralStatsDataManager();
+            GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
             GeneralStats generalStats = generalStatsDataManager.getCachedValue(uniqueId);
 
             Rank rank = generalStats.getRank();
@@ -78,7 +77,7 @@ public class RankCommand extends PluginCommand {
 
         Rank rankToGive = Rank.valueOf(args[2].toUpperCase());
         CompletableFuture.runAsync(() -> {
-            GeneralStatsDataManager generalStatsDataManager = Core.getInstance().getGeneralStatsDataManager();
+            GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
             generalStatsDataManager.applyChange(uniqueId, generalStats -> generalStats.setRank(rankToGive));
 
             GeneralStats generalStats = generalStatsDataManager.getRemoteValue(uniqueId);

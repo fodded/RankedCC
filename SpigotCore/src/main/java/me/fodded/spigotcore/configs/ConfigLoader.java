@@ -16,10 +16,6 @@ public class ConfigLoader {
 
     public ConfigLoader() {
         instance = this;
-
-        System.out.println(SpigotCore.getInstance() + " Spigotcore");
-        System.out.println(SpigotCore.getInstance().getPlugin() + " plugin");
-
         plugin = SpigotCore.getInstance().getPlugin();
     }
 

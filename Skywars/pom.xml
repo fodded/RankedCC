@@ -39,7 +39,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>target/Skywars.jar</outputFile>
+                            <outputFile>/home/theparasol/Desktop/server/lobby/plugins/Skywars.jar</outputFile>
                             <relocations>
                                 <relocation>
                                     <pattern>io.netty</pattern>

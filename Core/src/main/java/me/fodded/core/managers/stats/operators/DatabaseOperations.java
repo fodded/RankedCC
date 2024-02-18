@@ -1,12 +1,5 @@
 package me.fodded.core.managers.stats.operators;
 
-import com.mongodb.client.MongoCollection;
-import me.fodded.core.Core;
-import me.fodded.core.model.Database;
-import org.bson.Document;
-
-import java.util.UUID;
-
 public class DatabaseOperations {
 
     private static DatabaseOperations instance;

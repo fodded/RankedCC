@@ -54,6 +54,9 @@
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <outputFile>/home/theparasol/Desktop/server/bungeecord/plugins/Skywars.jar</outputFile>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

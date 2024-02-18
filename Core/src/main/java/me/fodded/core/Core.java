@@ -2,8 +2,6 @@ package me.fodded.core;
 
 import com.google.common.base.Preconditions;
 import lombok.Getter;
-import me.fodded.core.managers.stats.impl.GeneralStats;
-import me.fodded.core.managers.stats.impl.GeneralStatsDataManager;
 import me.fodded.core.model.Database;
 import me.fodded.core.model.Redis;
 import org.redisson.config.Config;
@@ -14,28 +12,23 @@ public class Core {
     @Getter
     private static Core instance;
 
-    private final Redis redis;
-    private final Database database;
+    private Redis redis;
+    private Database database;
 
-    private final GeneralStatsDataManager generalStatsDataManager;
-
-    private Core(String mongodbConnection, Config redisConfig) {
+    private Core() {
         instance = this;
-
-        redis = new Redis(redisConfig);
-        database = new Database(mongodbConnection);
-
-        generalStatsDataManager = new GeneralStatsDataManager(
-                database.getMongoDatabase(Database.STATISTICS_DB).getCollection("generalStats", GeneralStats.class),
-                redis.getRedissonClient().getMap("generalStats")
-        );
     }
 
-    public static void initialize(String mongodbConnection, Config redisConfig) {
+    public void initializeRedis(Config redisConfig) {
+        redis = new Redis(redisConfig);
+    }
+
+    public void initializeDatabase(String mongodbConnection) {
+        database = new Database(mongodbConnection);
+    }
+
+    public static void initialize() {
         Preconditions.checkState(instance == null, "The core is already initialized");
-        new Core(
-                mongodbConnection,
-                redisConfig
-        );
+        new Core();
     }
 }
