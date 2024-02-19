@@ -25,10 +25,10 @@ public class RankedStatsDataManager extends GlobalDataManager<UUID, RankedStats>
         String date = format.format(new Date());
 
         long monthsBetween = ChronoUnit.MONTHS.between(
-                LocalDate.parse("2016-04-13").withDayOfMonth(1),
+                LocalDate.parse("2024-02-13").withDayOfMonth(1),
                 LocalDate.parse(date).withDayOfMonth(1));
 
-        return (int) (monthsBetween + 1) - 16;
+        return (int) (monthsBetween + 1);
     }
 
     public static RankedStatsDataManager getInstance() {

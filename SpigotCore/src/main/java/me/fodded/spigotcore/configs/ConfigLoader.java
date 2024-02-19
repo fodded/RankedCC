@@ -8,11 +8,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigLoader {
 
     private static ConfigLoader instance;
     private JavaPlugin plugin;
+
+    private final Map<String, FileConfiguration> configCacheMap = new HashMap<>();
 
     public ConfigLoader() {
         instance = this;
@@ -46,7 +50,10 @@ public class ConfigLoader {
 
     public FileConfiguration getConfig(String fileName) {
         File file = new File(plugin.getDataFolder(), fileName);
-        return YamlConfiguration.loadConfiguration(file);
+        if(!configCacheMap.containsKey(fileName)) {
+            configCacheMap.put(fileName, YamlConfiguration.loadConfiguration(file));
+        }
+        return configCacheMap.get(fileName);
     }
 
     public static ConfigLoader getInstance() {

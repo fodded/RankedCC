@@ -2,8 +2,6 @@ package me.fodded.spigotcore.listeners;
 
 import me.fodded.core.model.DataManager;
 import me.fodded.core.model.GlobalDataManager;
-import me.fodded.spigotcore.SpigotCore;
-import me.fodded.spigotcore.tasks.UpdateScoreboardTask;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -21,13 +19,11 @@ public class PlayerConnectListener implements Listener {
 
         //GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
         //generalStatsDataManager.getCachedValue(uniqueId);
-
     }
 
     @EventHandler
     public void onPlayerJoinSync(PlayerJoinEvent event) {
-        UpdateScoreboardTask updateScoreboardTask = new UpdateScoreboardTask(event.getPlayer());
-        updateScoreboardTask.runTaskTimer(SpigotCore.getInstance().getPlugin(), 10L, 20L);
+
     }
 
     @EventHandler

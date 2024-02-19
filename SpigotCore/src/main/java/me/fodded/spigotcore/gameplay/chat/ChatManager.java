@@ -1,4 +1,4 @@
-package me.fodded.spigotcore.chat;
+package me.fodded.spigotcore.gameplay.chat;
 
 import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;

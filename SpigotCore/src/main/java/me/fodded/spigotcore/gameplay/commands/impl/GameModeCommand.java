@@ -1,8 +1,8 @@
-package me.fodded.spigotcore.commands.impl;
+package me.fodded.spigotcore.gameplay.commands.impl;
 
 import me.fodded.core.managers.ranks.Rank;
-import me.fodded.spigotcore.commands.CommandInfo;
-import me.fodded.spigotcore.commands.PluginCommand;
+import me.fodded.spigotcore.gameplay.commands.CommandInfo;
+import me.fodded.spigotcore.gameplay.commands.PluginCommand;
 import me.fodded.spigotcore.utils.StringUtils;
 import org.bukkit.GameMode;
 import org.bukkit.command.CommandSender;

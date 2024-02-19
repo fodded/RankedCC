@@ -1,4 +1,4 @@
-package me.fodded.spigotcore.commands;
+package me.fodded.spigotcore.gameplay.commands;
 
 import me.fodded.core.managers.ranks.Rank;
 

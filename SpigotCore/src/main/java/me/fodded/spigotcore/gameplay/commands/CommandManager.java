@@ -1,9 +1,9 @@
-package me.fodded.spigotcore.commands;
+package me.fodded.spigotcore.gameplay.commands;
 
 import lombok.Getter;
-import me.fodded.spigotcore.commands.impl.GameModeCommand;
-import me.fodded.spigotcore.commands.impl.RankCommand;
-import me.fodded.spigotcore.commands.impl.StatsCommand;
+import me.fodded.spigotcore.gameplay.commands.impl.GameModeCommand;
+import me.fodded.spigotcore.gameplay.commands.impl.RankCommand;
+import me.fodded.spigotcore.gameplay.commands.impl.StatsCommand;
 
 import java.util.ArrayList;
 import java.util.List;

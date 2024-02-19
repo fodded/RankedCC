@@ -1,4 +1,4 @@
-package me.fodded.spigotcore.commands;
+package me.fodded.spigotcore.gameplay.commands;
 
 import lombok.Getter;
 import lombok.SneakyThrows;

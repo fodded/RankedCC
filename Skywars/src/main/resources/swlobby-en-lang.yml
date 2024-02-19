@@ -1,0 +1,9 @@
+scoreboard:
+  - "&a&lSKYWARS"
+  - '&7{time} &8lobby'
+  - ''
+  - '&fOverall Kills: &a{kills}'
+  - ' '
+  - '&fRanked Rating: &b{rating}'
+  - '  '
+  - '&aranked.cc'
