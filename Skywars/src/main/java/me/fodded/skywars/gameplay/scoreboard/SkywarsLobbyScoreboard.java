@@ -1,4 +1,4 @@
-package me.fodded.skywars.managers;
+package me.fodded.skywars.gameplay.scoreboard;
 
 import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
@@ -37,7 +37,7 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
         o.setDisplayName(StringUtils.format(
                 ConfigLoader.getInstance()
-                        .getConfig("swlobby-"+generalStats.getChosenLanguage()+"-lang.yml")
+                        .getConfig(generalStats.getChosenLanguage()+"-lang.yml")
                         .getStringList("scoreboard").get(0)
         ));
 
@@ -54,7 +54,23 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
                 o.getScore(entry).setScore(index);
             }
 
-            team.setPrefix(string);
+            if(string.length() <= 16) {
+                team.setPrefix(StringUtils.format(string));
+                team.setSuffix(StringUtils.format("&f"));
+            } else {
+                String firstLine = string.substring(0, 16);
+                String rightSideLine = firstLine.split(" ")[firstLine.split(" ").length-1];
+
+                String colorCode;
+                if(rightSideLine.split("&").length>2) {
+                    colorCode = rightSideLine.substring(0,4);
+                } else {
+                    colorCode = "&" + rightSideLine.charAt(1);
+                }
+
+                team.setPrefix(StringUtils.format(string.substring(0, 16)));
+                team.setSuffix(StringUtils.format(colorCode + string.substring(16)));
+            }
             index++;
         }
     }
@@ -93,7 +109,7 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
 
         List<String> completedList = new LinkedList<>();
         List<String> scoreboardStrings = ConfigLoader.getInstance()
-                .getConfig("swlobby-"+generalStats.getChosenLanguage()+"-lang.yml")
+                .getConfig(generalStats.getChosenLanguage()+"-lang.yml")
                 .getStringList("scoreboard");
 
         RankedStats rankedStats = RankedStatsDataManager.getInstance().getCachedValue(uniqueId);
@@ -101,11 +117,16 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
             NumberFormat numberFormat = NumberFormat.getInstance(new Locale("en", "US"));
 
-            completedList.add(StringUtils.format(scoreboardStrings.get(i)
-                    .replace("{time}", dateFormat.format(System.currentTimeMillis()) + "")
-                    .replace("{rating}", numberFormat.format(rankedStats.getRankedSeasonStatsList().get(0).getRating()))
-                    .replace("{kills}", numberFormat.format(rankedStats.getKills()))
-            ));
+            completedList.add(
+                    scoreboardStrings.get(i)
+                            .replace("{time}", dateFormat.format(System.currentTimeMillis()) + "")
+                            .replace("{rating}", numberFormat.format(rankedStats.getRankedSeasonStatsList().get(0).getRating()))
+                            .replace("{losses}", numberFormat.format(rankedStats.getLosses()))
+                            .replace("{deaths}", numberFormat.format(rankedStats.getDeaths()))
+                            .replace("{rank}", generalStats.getRank().name())
+                            .replace("{rank_prefix}", generalStats.getRank().getPrefix())
+                            .replace("{kills}", numberFormat.format(rankedStats.getKills()))
+            );
         }
 
         Collections.reverse(completedList);

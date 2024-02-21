@@ -24,8 +24,8 @@ public class ChatManager implements Listener {
     public ChatManager(long chatDelay) {
         this.chatDelay = chatDelay;
 
-        SpigotCore core = SpigotCore.getInstance();
-        core.getPlugin().getServer().getPluginManager().registerEvents(this, core.getPlugin());
+        SpigotCore spigotCore = SpigotCore.getInstance();
+        spigotCore.getPlugin().getServer().getPluginManager().registerEvents(this, spigotCore.getPlugin());
     }
 
     @EventHandler
@@ -36,6 +36,12 @@ public class ChatManager implements Listener {
         GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
         GeneralStats generalStats = generalStatsDataManager.getCachedValue(player.getUniqueId());
 
+        if(!generalStats.isChatEnabled()) {
+            player.sendMessage(StringUtils.format(
+                    ConfigLoader.getInstance().getConfig(generalStats.getChosenLanguage() + "-lang.yml").getString("no-chat-allowed")
+            ));
+        }
+
         Rank rank = generalStats.getRank();
         if (isPlayerFlooding(event, rank, generalStats)) {
             return;
@@ -45,8 +51,13 @@ public class ChatManager implements Listener {
         String displayedName = generalStats.getDisplayedName().isEmpty() ? player.getName() : generalStats.getDisplayedName();
 
         String message = getFormattedMessage(event);
-        for(Player p : Bukkit.getOnlinePlayers()) {
-            p.sendMessage(StringUtils.format(prefix + displayedName + "&f: ") + message);
+        for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
+            GeneralStats eachPlayerGeneralStats = GeneralStatsDataManager.getInstance().getCachedValue(eachPlayer.getUniqueId());
+            if(!eachPlayerGeneralStats.isChatEnabled()) {
+                continue;
+            }
+
+            eachPlayer.sendMessage(StringUtils.format(prefix + displayedName + "&f: ") + message);
         }
 
         floodMap.put(event.getPlayer().getUniqueId(), System.currentTimeMillis()+chatDelay);
@@ -61,16 +72,18 @@ public class ChatManager implements Listener {
     }
 
     private boolean isPlayerFlooding(AsyncPlayerChatEvent event, Rank rank, GeneralStats generalStats) {
-        if(rank.getPriority() > 0) {
-            if (floodMap.containsKey(event.getPlayer().getUniqueId())) {
-                if (floodMap.get(event.getPlayer().getUniqueId()) > System.currentTimeMillis()) {
-                    event.getPlayer().sendMessage(StringUtils.format(
-                            ConfigLoader.getInstance().getConfig(generalStats.getChosenLanguage() + "-lang.yml").getString("chat-delay")
-                    ));
-                    return true;
-                }
+        if(Bukkit.getPlayer(generalStats.getUniqueId()).isOp()) {
+            return false;
+        }
+        if (floodMap.containsKey(event.getPlayer().getUniqueId())) {
+            if (floodMap.get(event.getPlayer().getUniqueId()) > System.currentTimeMillis()) {
+                event.getPlayer().sendMessage(StringUtils.format(
+                        ConfigLoader.getInstance().getConfig(generalStats.getChosenLanguage() + "-lang.yml").getString("chat-delay")
+                ));
+                return true;
             }
         }
+
         return false;
     }
 }

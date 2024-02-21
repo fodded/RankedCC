@@ -7,3 +7,6 @@ scoreboard:
   - '&fRanked Rating: &b{rating}'
   - '  '
   - '&aranked.cc'
+
+chat-delay: "&cPlease do not spam in the chat."
+no-chat-allowed: "&cYou cannot use chat because it's disabled in your settings"

@@ -14,7 +14,7 @@ public class GeneralStats {
     private Rank rank;
 
     private String prefix, displayedName, lastName, chosenLanguage;
-    private boolean vanished, logging, playersVisibility, chatEnabled;
+    private boolean vanished, logging, playersVisibility, chatEnabled, friendRequestsEnabled;
 
     private long lastLogin, firstLogin;
 
@@ -27,7 +27,7 @@ public class GeneralStats {
         this.prefix = "";
         this.lastName = "";
         this.displayedName = "";
-        this.chosenLanguage = "ru";
+        this.chosenLanguage = "english";
 
         this.chatEnabled = true;
         this.playersVisibility = true;

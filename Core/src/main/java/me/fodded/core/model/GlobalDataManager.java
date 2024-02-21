@@ -67,6 +67,7 @@ public abstract class GlobalDataManager<K, V> {
         kConsumer.accept(value);
 
         redissonMap.put(key, value);
+        loadingCache.refresh(key);
     }
 
     public void applyChangeToDatabase(K key, Consumer<V> kConsumer) {
@@ -100,6 +101,10 @@ public abstract class GlobalDataManager<K, V> {
 
     public V getCachedValue(K key) {
         return loadingCache.get(key);
+    }
+
+    public void updateCache(K key) {
+        loadingCache.refresh(key);
     }
 
     public boolean isInDatabase(K key) {

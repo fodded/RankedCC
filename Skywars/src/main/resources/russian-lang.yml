@@ -1,0 +1,12 @@
+scoreboard:
+  - "&a&lSKYWARS"
+  - '&7{time} &8lobby'
+  - ''
+  - '&fКиллы: &a{kills}'
+  - ' '
+  - '&fРейтинг: &b{rating}'
+  - '  '
+  - '&aranked.cc'
+
+chat-delay: "&cПожалуйста не спамьте в чате"
+no-chat-allowed: "&cВы не можете писать в чат потому что он отключен в ваших настройках"

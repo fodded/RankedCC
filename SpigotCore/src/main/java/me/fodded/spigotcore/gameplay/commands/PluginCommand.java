@@ -44,9 +44,11 @@ public abstract class PluginCommand implements CommandExecutor {
         }
 
         if(sender instanceof Player) {
-            if (!Rank.hasPermission(command.getRank(), ((Player) sender).getUniqueId())) {
-                sender.sendMessage(StringUtils.format(SpigotCore.getInstance().getNoPermissionMessage()));
-                return false;
+            if(!sender.isOp()) {
+                if (!Rank.hasPermission(command.getRank(), ((Player) sender).getUniqueId())) {
+                    sender.sendMessage(StringUtils.format(SpigotCore.getInstance().getNoPermissionMessage()));
+                    return false;
+                }
             }
         }
 

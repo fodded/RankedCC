@@ -18,7 +18,8 @@ public class ItemUtils {
 
         if(enchanted) {
             meta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-            meta.addItemFlags(new ItemFlag[] { ItemFlag.HIDE_ENCHANTS });
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
         itemStack.setItemMeta(meta);
@@ -29,6 +30,7 @@ public class ItemUtils {
         ItemMeta meta = itemStack.getItemMeta();
 
         meta.setDisplayName(StringUtils.format(name));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.setLore(getFormattedList(lore));
 
         itemStack.setItemMeta(meta);
@@ -44,7 +46,25 @@ public class ItemUtils {
 
         if(enchanted) {
             meta.addEnchant(Enchantment.KNOCKBACK, 1, true);
-            meta.addItemFlags(new ItemFlag[] { ItemFlag.HIDE_ENCHANTS });
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        }
+
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    public static ItemStack getItemStack(Material material, String name, List<String> lore, boolean enchanted) {
+        ItemStack stack = new ItemStack(material);
+        ItemMeta meta = stack.getItemMeta();
+
+        meta.setDisplayName(StringUtils.format(name));
+        meta.setLore(getFormattedList(lore));
+
+        if(enchanted) {
+            meta.addEnchant(Enchantment.KNOCKBACK, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         }
 
         stack.setItemMeta(meta);
@@ -56,6 +76,7 @@ public class ItemUtils {
         ItemMeta meta = stack.getItemMeta();
 
         meta.setDisplayName(StringUtils.format(name));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.setLore(getFormattedList(lore));
 
         stack.setItemMeta(meta);
@@ -67,6 +88,7 @@ public class ItemUtils {
         ItemMeta meta = stack.getItemMeta();
 
         meta.setDisplayName(StringUtils.format(name));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.setLore(getFormattedList(lore));
 
         stack.setItemMeta(meta);
@@ -78,6 +100,7 @@ public class ItemUtils {
         ItemMeta meta = stack.getItemMeta();
 
         meta.setDisplayName(StringUtils.format(name));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.setLore(getFormattedList(lore));
 
         stack.setItemMeta(meta);
@@ -89,6 +112,7 @@ public class ItemUtils {
         ItemMeta meta = stack.getItemMeta();
 
         meta.setDisplayName(StringUtils.format(name));
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         meta.setLore(getFormattedList(lore));
 
         stack.setItemMeta(meta);

@@ -1,6 +1,6 @@
 package me.fodded.skywars.tasks;
 
-import me.fodded.skywars.managers.SkywarsLobbyScoreboard;
+import me.fodded.skywars.gameplay.scoreboard.SkywarsLobbyScoreboard;
 import me.fodded.spigotcore.gameplay.scoreboard.AbstractScoreboard;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;

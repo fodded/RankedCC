@@ -1,6 +1,7 @@
 package me.fodded.spigotcore.gameplay.commands;
 
 import lombok.Getter;
+import me.fodded.spigotcore.gameplay.commands.impl.ConfigReloadCommand;
 import me.fodded.spigotcore.gameplay.commands.impl.GameModeCommand;
 import me.fodded.spigotcore.gameplay.commands.impl.RankCommand;
 import me.fodded.spigotcore.gameplay.commands.impl.StatsCommand;
@@ -23,6 +24,7 @@ public class CommandManager {
         commandsList.add(new GameModeCommand());
         commandsList.add(new RankCommand());
         commandsList.add(new StatsCommand());
+        commandsList.add(new ConfigReloadCommand());
     }
 
     public void addCommand(PluginCommand command) {
