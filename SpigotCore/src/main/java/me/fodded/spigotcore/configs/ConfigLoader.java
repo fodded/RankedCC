@@ -53,18 +53,6 @@ public class ConfigLoader {
         }
     }
 
-    private List<String> getAllLanguages() {
-        List<String> languagesList = new LinkedList<>();
-        File[] files = plugin.getDataFolder().listFiles();
-        for(File file : files) {
-            if(file.getName().contains("-lang.yml")) {
-                String shortenedName = file.getName().split("-")[0];
-                languagesList.add(shortenedName);
-            }
-        }
-        return languagesList;
-    }
-
     public FileConfiguration getConfig(String fileName) {
         File file = new File(plugin.getDataFolder(), fileName);
         if(!configCacheMap.containsKey(fileName)) {
@@ -75,7 +63,6 @@ public class ConfigLoader {
 
     public void clearConfigCache() {
         configCacheMap.clear();
-        languagesList = getAllLanguages();
     }
 
     public static ConfigLoader getInstance() {

@@ -17,7 +17,7 @@ public class UpdateScoreboardTask extends BukkitRunnable {
     @Override
     public void run() {
         if(player.isOnline()) {
-            AbstractScoreboard scoreboardManager = AbstractScoreboard.getScoreboardManager(player);
+            AbstractScoreboard scoreboardManager = AbstractScoreboard.getScoreboardManager(player.getUniqueId());
             scoreboardManager.update();
             return;
         }

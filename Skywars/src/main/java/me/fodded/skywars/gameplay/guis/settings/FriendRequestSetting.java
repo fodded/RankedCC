@@ -22,16 +22,16 @@ public class FriendRequestSetting extends AbstractGuiSetting {
     @Override
     public void initializeItemStack() {
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueID());
-        boolean flag = generalStats.isFriendRequestsEnabled();
+        boolean friendRequestsEnabled = generalStats.isFriendRequestsEnabled();
 
         setItemStack(ItemUtils.getItemStack(
-                flag ? Material.PAPER : Material.EMPTY_MAP,
+                friendRequestsEnabled ? Material.PAPER : Material.EMPTY_MAP,
                 "&fReceive Friend &6&lRequests",
                 Arrays.asList(
-                        (flag ? "&cNo one" : "&6Anyone") + " &fcan send you friend request now.",
+                        (friendRequestsEnabled ? "&cNo one" : "&6Anyone") + " &fcan send you friend request now.",
                         "&fRight Click to turn on/off this option."
                 ),
-                generalStats.isFriendRequestsEnabled()
+                friendRequestsEnabled
         ));
     }
 

@@ -41,7 +41,7 @@ public abstract class AbstractScoreboard {
         scoreboardMap.remove(uniqueId);
     }
 
-    public static AbstractScoreboard getScoreboardManager(Player player) {
-        return scoreboardMap.get(player.getUniqueId());
+    public static AbstractScoreboard getScoreboardManager(UUID uniqueId) {
+        return scoreboardMap.get(uniqueId);
     }
 }

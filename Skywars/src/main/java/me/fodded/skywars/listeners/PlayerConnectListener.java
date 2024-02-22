@@ -24,34 +24,13 @@ public class PlayerConnectListener implements Listener {
 
     @EventHandler
     public void onJoinSync(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        player.teleport(ServerLocations.getInstance().getLobbyLocation());
-        player.setAllowFlight(true); // needed for double jump
-
-        UpdateScoreboardTask updateScoreboardTask = new UpdateScoreboardTask(player);
-        updateScoreboardTask.runTaskTimer(SpigotCore.getInstance().getPlugin(), 10L, 20L);
-
-        // telling redis what is actual amount of players on our server atm
-        SpigotServerManager.getInstance().updatePlayerCount(Bukkit.getOnlinePlayers().size()+1);
-
-        // We need to give player items with a small delay, so we are sure we have enough time to load data
-        LobbyPlayer lobbyPlayer = new LobbyPlayer(player.getUniqueId());
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            if(player.isOnline()) {
-                lobbyPlayer.initializePlayer();
-            }
-        }, 10L);
+        LobbyPlayer lobbyPlayer = new LobbyPlayer(event.getPlayer().getUniqueId());
+        lobbyPlayer.handleJoin();
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        SkywarsLobbyScoreboard skywarsLobbyScoreboard = (SkywarsLobbyScoreboard) SkywarsLobbyScoreboard.getScoreboardManager(player);
-        if(skywarsLobbyScoreboard != null) {
-            skywarsLobbyScoreboard.removeScoreboard();
-        }
-
-        // telling redis what is actual amount of players on our server atm
-        SpigotServerManager.getInstance().updatePlayerCount(Bukkit.getOnlinePlayers().size()-1);
+        LobbyPlayer lobbyPlayer = LobbyPlayer.getLobbyPlayer(event.getPlayer().getUniqueId());
+        lobbyPlayer.handleQuit();
     }
 }

@@ -4,6 +4,7 @@ import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.spigotcore.configs.ConfigLoader;
 import me.fodded.spigotcore.gameplay.gui.AbstractGuiSetting;
+import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.ItemUtils;
 import me.fodded.spigotcore.utils.StringUtils;
 import org.bukkit.Material;
@@ -48,57 +49,28 @@ public class LanguageSelectorSetting extends AbstractGuiSetting {
 
         setItemStack(ItemUtils.getItemStack(
                 Material.BOOK,
-                "&fCurrently Selected &6&lLanguage",
+                "&fCurrent Selected &6&lLanguage",
                 loreList
         ));
     }
 
     @Override
     public void onClick(InventoryClickEvent event, Player player) {
-        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueID());
-        String newLanguage = getNextLanguage(generalStats.getChosenLanguage());
+        String currentSelectedLanguage = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueID()).getChosenLanguage();
+        LanguageManager languageManager = LanguageManager.getInstance();
+
+        String newLanguage;
         if(event.isRightClick()) {
-            newLanguage = getPreviousLanguage(generalStats.getChosenLanguage());
+            newLanguage = languageManager.getPreviousLanguage(currentSelectedLanguage);
+        } else {
+            newLanguage = languageManager.getNextLanguage(currentSelectedLanguage);
         }
 
-        String finalNewLanguage = newLanguage;
         GeneralStatsDataManager.getInstance().applyChange(
-                getUniqueID(), generalStats1 -> generalStats1.setChosenLanguage(finalNewLanguage)
+                getUniqueID(), generalStats -> generalStats.setChosenLanguage(newLanguage)
         );
 
         player.playSound(player.getLocation(), Sound.CLICK, 1.0f, 1.0f);
         new SettingsGui(player);
-    }
-
-    private int getIndex(String language) {
-        List<String> languagesList = ConfigLoader.getInstance().getLanguagesList();
-        for(int i = 0; i < languagesList.size(); i++) {
-            if(languagesList.get(i).equalsIgnoreCase(language)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    private String getNextLanguage(String currentLanguage) {
-        List<String> languagesList = ConfigLoader.getInstance().getLanguagesList();
-        int currentLanguageIndex = getIndex(currentLanguage);
-
-        if(languagesList.size()-1<currentLanguageIndex+1) {
-            return languagesList.get(0);
-        }
-        return languagesList.get(currentLanguageIndex+1);
-    }
-
-    private String getPreviousLanguage(String currentLanguage) {
-        List<String> languagesList = ConfigLoader.getInstance().getLanguagesList();
-        int currentLanguageIndex = getIndex(currentLanguage);
-
-        // english 0
-        // 3
-        if(currentLanguageIndex-1 < 0) {
-            return languagesList.get(languagesList.size()-1);
-        }
-        return languagesList.get(currentLanguageIndex-1);
     }
 }
