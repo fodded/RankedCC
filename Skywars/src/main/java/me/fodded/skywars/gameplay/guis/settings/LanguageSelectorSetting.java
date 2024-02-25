@@ -2,11 +2,13 @@ package me.fodded.skywars.gameplay.guis.settings;
 
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
-import me.fodded.spigotcore.configs.ConfigLoader;
+import me.fodded.skywars.Main;
+import me.fodded.skywars.managers.LobbyPlayer;
 import me.fodded.spigotcore.gameplay.gui.AbstractGuiSetting;
 import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.ItemUtils;
 import me.fodded.spigotcore.utils.StringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -32,7 +34,7 @@ public class LanguageSelectorSetting extends AbstractGuiSetting {
         loreList.add(StringUtils.format("&f"));
 
         // 1 - english 2 - russian
-        List<String> languagesList = ConfigLoader.getInstance().getLanguagesList();
+        List<String> languagesList = LanguageManager.getInstance().getLangaugesList();
         for(String language : languagesList) {
             boolean isSelectedLanguage = generalStats.getChosenLanguage().equalsIgnoreCase(language);
 
@@ -69,8 +71,17 @@ public class LanguageSelectorSetting extends AbstractGuiSetting {
         GeneralStatsDataManager.getInstance().applyChange(
                 getUniqueID(), generalStats -> generalStats.setChosenLanguage(newLanguage)
         );
-
         player.playSound(player.getLocation(), Sound.CLICK, 1.0f, 1.0f);
-        new SettingsGui(player);
+
+        // We run the open menu later because otherwise we get visual bug like nothing's been changed
+        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
+            if(player == null || !player.isOnline()) {
+                return;
+            }
+
+            LobbyPlayer lobbyPlayer = LobbyPlayer.getLobbyPlayer(player.getUniqueId());
+            lobbyPlayer.setItemsToPlayerInventory();
+            new SettingsGui(player);
+        }, 2L);
     }
 }

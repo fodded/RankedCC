@@ -42,6 +42,14 @@ public class PlayerConnectListener implements Listener {
             UUID uniqueId = player.getUniqueId();
 
             for (GlobalDataManager dataManager : DataManager.getInstance().getStatisticsList()) {
+                if (dataManager instanceof GeneralStatsDataManager) {
+                    GeneralStatsDataManager generalStatsDataManager = (GeneralStatsDataManager) dataManager;
+                    generalStatsDataManager.applyChangeToRedis(
+                            uniqueId,
+                            generalStats -> generalStats.setTimePlayed(generalStats.getTimePlayed() + System.currentTimeMillis() - generalStats.getLastLogin())
+                    );
+                }
+
                 dataManager.unloadFromRedisToDatabase(uniqueId);
                 dataManager.removeFromCache(uniqueId);
             }

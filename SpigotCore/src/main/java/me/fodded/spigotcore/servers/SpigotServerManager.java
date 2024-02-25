@@ -3,6 +3,7 @@ package me.fodded.spigotcore.servers;
 import lombok.Getter;
 import me.fodded.core.Core;
 import me.fodded.spigotcore.SpigotCore;
+import me.fodded.spigotcore.servers.tasks.ServerPlayersAmountTask;
 import org.redisson.api.RMap;
 
 import java.util.HashMap;
@@ -18,6 +19,10 @@ public class SpigotServerManager {
     public SpigotServerManager() {
         instance = this;
         playersMap = Core.getInstance().getRedis().getRedissonClient().getMap("playersMap");
+
+        String serverName = SpigotCore.getInstance().getServerName();
+        ServerPlayersAmountTask serverPlayersAmountTask = new ServerPlayersAmountTask(serverName);
+        serverPlayersAmountTask.runTaskTimer(SpigotCore.getInstance().getPlugin(), 20L, 20L);
     }
 
     public void updatePlayerCount(int playersAmount) {

@@ -1,6 +1,7 @@
 package me.fodded.skywars.gameplay.commands;
 
 import me.fodded.core.managers.ranks.Rank;
+import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.skywars.managers.ServerLocations;
 import me.fodded.spigotcore.configs.ConfigLoader;
 import me.fodded.spigotcore.gameplay.commands.CommandInfo;
@@ -11,12 +12,25 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 @CommandInfo(name = "setlobby", usage = "/setlobby", description = "set new lobby location", rank = Rank.ADMIN)
 public class SetLobbyCommand extends PluginCommand {
 
     @Override
     public void onCommand(CommandSender sender, String[] args) {
         if(!(sender instanceof Player)) {
+            return;
+        }
+
+        if(args.length == 1) {
+            UUID uniqueId = ((Player) sender).getUniqueId();
+
+            GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
+            generalStatsDataManager.applyChangeToRedis(
+                    uniqueId,
+                    generalStats -> generalStats.addFriendToList(UUID.randomUUID())
+            );
             return;
         }
 

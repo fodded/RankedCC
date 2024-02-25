@@ -1,10 +1,11 @@
 package me.fodded.spigotcore.languages;
 
+import lombok.Getter;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.configs.ConfigLoader;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -15,6 +16,8 @@ import java.util.UUID;
 public class LanguageManager {
 
     private static LanguageManager instance;
+
+    @Getter
     private final List<String> langaugesList;
 
     public LanguageManager() {
@@ -36,26 +39,13 @@ public class LanguageManager {
         }
     }
 
-    public String getString(String language, String path) {
-        return ConfigLoader.getInstance().getConfig(language + "-lang.yml").getString(path);
-    }
-
-    public String getString(UUID uniqueId, String path) {
+    public Configuration getLanguageConfig(UUID uniqueId) {
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(uniqueId);
-        return ConfigLoader.getInstance().getConfig(generalStats.getChosenLanguage() + "-lang.yml").getString(path);
-    }
-
-    public List<String> getList(GeneralStats generalStats, String path) {
-        return ConfigLoader.getInstance().getConfig(generalStats.getChosenLanguage() + "-lang.yml").getStringList(path);
-    }
-
-    public List<String> getList(UUID uniqueId, String path) {
-        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(uniqueId);
-        return ConfigLoader.getInstance().getConfig(generalStats.getChosenLanguage() + "-lang.yml").getStringList(path);
+        return ConfigLoader.getInstance().getConfig(generalStats.getChosenLanguage() + "-lang.yml");
     }
 
     private int getLanguageIndex(String language) {
-        List<String> languagesList = ConfigLoader.getInstance().getLanguagesList();
+        List<String> languagesList = langaugesList;
         for(int i = 0; i < languagesList.size(); i++) {
             if(languagesList.get(i).equalsIgnoreCase(language)) {
                 return i;
@@ -65,7 +55,7 @@ public class LanguageManager {
     }
 
     public String getNextLanguage(String currentLanguage) {
-        List<String> languagesList = ConfigLoader.getInstance().getLanguagesList();
+        List<String> languagesList = langaugesList;
         int currentLanguageIndex = getLanguageIndex(currentLanguage);
 
         if(languagesList.size()-1<currentLanguageIndex+1) {
@@ -75,7 +65,7 @@ public class LanguageManager {
     }
 
     public String getPreviousLanguage(String currentLanguage) {
-        List<String> languagesList = ConfigLoader.getInstance().getLanguagesList();
+        List<String> languagesList = langaugesList;
         int currentLanguageIndex = getLanguageIndex(currentLanguage);
 
         if(currentLanguageIndex-1 < 0) {

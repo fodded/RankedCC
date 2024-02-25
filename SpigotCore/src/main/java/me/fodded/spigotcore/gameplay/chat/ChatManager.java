@@ -4,7 +4,7 @@ import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.spigotcore.SpigotCore;
-import me.fodded.spigotcore.configs.ConfigLoader;
+import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,7 +38,7 @@ public class ChatManager implements Listener {
 
         if(!generalStats.isChatEnabled()) {
             player.sendMessage(StringUtils.format(
-                    ConfigLoader.getInstance().getConfig(generalStats.getChosenLanguage() + "-lang.yml").getString("no-chat-allowed")
+                    LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString("no-chat-allowed")
             ));
         }
 
@@ -78,7 +78,7 @@ public class ChatManager implements Listener {
         if (floodMap.containsKey(event.getPlayer().getUniqueId())) {
             if (floodMap.get(event.getPlayer().getUniqueId()) > System.currentTimeMillis()) {
                 event.getPlayer().sendMessage(StringUtils.format(
-                        ConfigLoader.getInstance().getConfig(generalStats.getChosenLanguage() + "-lang.yml").getString("chat-delay")
+                        LanguageManager.getInstance().getLanguageConfig(generalStats.getUniqueId()).getString("chat-delay")
                 ));
                 return true;
             }

@@ -1,12 +1,42 @@
 scoreboard:
-  - "&a&lSKYWARS"
+  - "&6&lMAIN LOBBY"
   - '&7{time} &8lobby'
   - ''
-  - '&fOverall Kills: &a{kills}'
+  - '&fRANK PACKAGE'
+  - "&6&l{rank}"
   - ' '
-  - '&fRanked Rating: &b{rating}'
+  - '&fFriends: &6{friends}'
+  - '&fHours played: &6{time_played}'
   - '  '
-  - '&aranked.cc'
+  - "&fServer ip &faddress"
+  - '&6ranked.cc'
 
 chat-delay: "&cPlease do not spam in the chat."
 no-chat-allowed: "&cYou cannot use chat because it's disabled in your settings"
+
+player-items:
+  1:
+    material: MAGMA_CREAM
+    name: "&6&lServer menu"
+    description:
+      - "&fRight Click to open Server Menu!"
+  2:
+    material: BLAZE_POWDER
+    name: "&fCosmetics Menu &6(Right Click)"
+    description:
+      - "&fRight Click to open Cosmetics Menu!"
+  7:
+    material: GOLD_NUGGET
+    name: "&fSettings &6(Right Click)"
+    description:
+      - "&fRight Click to open Settings!"
+  8:
+    material: GOLDEN_CARROT/CARROT_ITEM
+    name: "&fPlayers: %visibility% &6(Right Click)"
+    description:
+      - "&fRight Click to toggle player visibility!"
+  9:
+    material: FIREWORK_CHARGE
+    name: "&fLobby Menu &6(Right Click)"
+    description:
+      - "&fRight Click to open Lobby Menu!"

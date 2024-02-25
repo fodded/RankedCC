@@ -5,8 +5,8 @@ import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.core.managers.stats.impl.skywars.ranked.RankedStats;
 import me.fodded.core.managers.stats.impl.skywars.ranked.RankedStatsDataManager;
-import me.fodded.spigotcore.configs.ConfigLoader;
 import me.fodded.spigotcore.gameplay.scoreboard.AbstractScoreboard;
+import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,6 +19,7 @@ import org.bukkit.scoreboard.Team;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class SkywarsLobbyScoreboard extends AbstractScoreboard {
 
@@ -34,10 +35,8 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
             o.setDisplaySlot(DisplaySlot.SIDEBAR);
         }
 
-        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
         o.setDisplayName(StringUtils.format(
-                ConfigLoader.getInstance()
-                        .getConfig(generalStats.getChosenLanguage()+"-lang.yml")
+                LanguageManager.getInstance().getLanguageConfig(getUniqueId())
                         .getStringList("scoreboard").get(0)
         ));
 
@@ -108,8 +107,7 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(uniqueId);
 
         List<String> completedList = new LinkedList<>();
-        List<String> scoreboardStrings = ConfigLoader.getInstance()
-                .getConfig(generalStats.getChosenLanguage()+"-lang.yml")
+        List<String> scoreboardStrings = LanguageManager.getInstance().getLanguageConfig(uniqueId)
                 .getStringList("scoreboard");
 
         RankedStats rankedStats = RankedStatsDataManager.getInstance().getCachedValue(uniqueId);
@@ -119,7 +117,9 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
 
             completedList.add(
                     scoreboardStrings.get(i)
-                            .replace("{time}", dateFormat.format(System.currentTimeMillis()) + "")
+                            .replace("{time}", dateFormat.format(System.currentTimeMillis()))
+                            .replace("{time_played}", TimeUnit.MILLISECONDS.toHours(generalStats.getTimePlayed())+"")
+                            .replace("{friends}", numberFormat.format(generalStats.getFriendList().size()))
                             .replace("{rating}", numberFormat.format(rankedStats.getRankedSeasonStatsList().get(0).getRating()))
                             .replace("{losses}", numberFormat.format(rankedStats.getLosses()))
                             .replace("{deaths}", numberFormat.format(rankedStats.getDeaths()))

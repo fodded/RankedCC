@@ -12,16 +12,17 @@ import me.fodded.skywars.gameplay.guis.settings.SettingsGui;
 import me.fodded.skywars.gameplay.scoreboard.SkywarsLobbyScoreboard;
 import me.fodded.skywars.tasks.UpdateScoreboardTask;
 import me.fodded.spigotcore.SpigotCore;
-import me.fodded.spigotcore.configs.ConfigLoader;
-import me.fodded.spigotcore.servers.SpigotServerManager;
+import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.ItemUtils;
 import me.fodded.spigotcore.utils.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,7 +32,6 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
     private static Map<UUID, LobbyPlayer> lobbyPlayerMap = new HashMap<>();
 
     private long lastTimeUsed = 0;
-    private final UUID uniqueId;
 
     public LobbyPlayer(UUID uniqueId) {
         super(uniqueId);
@@ -40,40 +40,49 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
     }
 
     public void handleJoin() {
-        Player player = Bukkit.getPlayer(uniqueId);
+        Player player = Bukkit.getPlayer(getUniqueId());
         player.teleport(ServerLocations.getInstance().getLobbyLocation());
         player.setAllowFlight(true); // needed for double jump
+        player.setGameMode(GameMode.ADVENTURE);
 
         UpdateScoreboardTask updateScoreboardTask = new UpdateScoreboardTask(player);
         updateScoreboardTask.runTaskTimer(SpigotCore.getInstance().getPlugin(), 10L, 20L);
-
-        // telling redis what is actual amount of players on our server atm
-        SpigotServerManager.getInstance().updatePlayerCount(Bukkit.getOnlinePlayers().size()+1);
 
         // We need to give player items with a small delay, so we are sure we have enough time to load data
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
             if(player.isOnline()) {
                 initializePlayer();
+
+                for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
+                    LobbyPlayer lobbyPlayer = getLobbyPlayer(eachPlayer.getUniqueId());
+                    lobbyPlayer.updateVisibility();
+                }
             }
         }, 10L);
     }
 
     public void handleQuit() {
-        SkywarsLobbyScoreboard skywarsLobbyScoreboard = (SkywarsLobbyScoreboard) SkywarsLobbyScoreboard.getScoreboardManager(uniqueId);
+        SkywarsLobbyScoreboard skywarsLobbyScoreboard = (SkywarsLobbyScoreboard) SkywarsLobbyScoreboard.getScoreboardManager(getUniqueId());
         if(skywarsLobbyScoreboard != null) {
             skywarsLobbyScoreboard.removeScoreboard();
         }
-
-        // telling redis what is actual amount of players on our server atm
-        SpigotServerManager.getInstance().updatePlayerCount(Bukkit.getOnlinePlayers().size()-1);
     }
 
     public void initializePlayer() {
         setItemsToPlayerInventory();
     }
 
+    public void updateVisibility() {
+        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
+        if(generalStats.isPlayersVisibility()) {
+            showPlayers();
+        } else {
+            hidePlayers();
+        }
+    }
+
     public void openGui(Material holdingMaterial) {
-        Player player = Bukkit.getPlayer(uniqueId);
+        Player player = Bukkit.getPlayer(getUniqueId());
         GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
 
         switch(holdingMaterial) {
@@ -93,7 +102,7 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
                 if(isFlooding()) {
                     return;
                 }
-                generalStatsDataManager.applyChangeToRedis(uniqueId, generalStats -> generalStats.setPlayersVisibility(false));
+                generalStatsDataManager.applyChangeToRedis(getUniqueId(), generalStats -> generalStats.setPlayersVisibility(false));
                 hidePlayers();
                 Bukkit.getScheduler().runTaskLater(Main.getInstance(), this::setItemsToPlayerInventory, 2);
                 break;
@@ -101,7 +110,7 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
                 if(isFlooding()) {
                     return;
                 }
-                generalStatsDataManager.applyChangeToRedis(uniqueId, generalStats -> generalStats.setPlayersVisibility(true));
+                generalStatsDataManager.applyChangeToRedis(getUniqueId(), generalStats -> generalStats.setPlayersVisibility(true));
                 showPlayers();
                 Bukkit.getScheduler().runTaskLater(Main.getInstance(), this::setItemsToPlayerInventory, 2);
                 break;
@@ -109,10 +118,10 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
     }
 
     private boolean isFlooding() {
-        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(uniqueId);
-        Player player = Bukkit.getPlayer(uniqueId);
+        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
+        Player player = Bukkit.getPlayer(getUniqueId());
 
-        String floodingMessage = ConfigLoader.getInstance().getConfig(generalStats + "-lang.yml").getString("chat-delay");
+        String floodingMessage = LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString("chat-delay");
         if(lastTimeUsed > System.currentTimeMillis()) {
             player.sendMessage(StringUtils.format(floodingMessage));
             return true;
@@ -122,14 +131,14 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
     }
 
     private void hidePlayers() {
-        Player player = Bukkit.getPlayer(uniqueId);
+        Player player = Bukkit.getPlayer(getUniqueId());
         for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
             player.hidePlayer(eachPlayer);
         }
     }
 
     private void showPlayers() {
-        Player player = Bukkit.getPlayer(uniqueId);
+        Player player = Bukkit.getPlayer(getUniqueId());
         for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
             GeneralStats eachPlayerGeneralStats = GeneralStatsDataManager.getInstance().getCachedValue(eachPlayer.getUniqueId());
 
@@ -140,42 +149,43 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
         }
     }
 
-    private void setItemsToPlayerInventory() {
-        Player player = Bukkit.getPlayer(uniqueId);
+    public void setItemsToPlayerInventory() {
+        Player player = Bukkit.getPlayer(getUniqueId());
         if(player == null) {
             return;
         }
 
-        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(uniqueId);
-        player.getInventory().setItem(8, ItemUtils.getItemStack(
-                Material.FIREWORK_CHARGE,
-                "&fLobby Selector &6(Right Click)",
-                Arrays.asList("&fRight Click to open Lobby Selector menu!")
-        ));
+        Configuration languageConfig = LanguageManager.getInstance().getLanguageConfig(getUniqueId());
+        for(String path : languageConfig.getConfigurationSection("player-items").getKeys(false)) {
+            int slot = Integer.parseInt(path) - 1;
+            String displayName = getVisibilityStatus(languageConfig.getString("player-items." + path + ".name"));
+            Material material = getVisibilityMaterial(languageConfig.getString("player-items." + path + ".material"));
+            List<String> descriptionList = languageConfig.getStringList("player-items." + path + ".description");
 
-        player.getInventory().setItem(7, ItemUtils.getItemStack(
-                generalStats.isPlayersVisibility() ? Material.GOLDEN_CARROT : Material.CARROT_ITEM,
-                "&fPlayers: " + (generalStats.isPlayersVisibility() ? "Visible" : "Hidden") + " &6(Right Click)",
-                Arrays.asList("&fRight-click to toggle player visibility!")
-        ));
+            player.getInventory().setItem(
+                    slot,
+                    ItemUtils.getItemStack(material, displayName,descriptionList, false, 1)
+            );
+        }
+    }
 
-        player.getInventory().setItem(6, ItemUtils.getItemStack(
-                Material.GOLD_NUGGET,
-                "&fSettings &6(Right Click)",
-                Arrays.asList("&fRight-click to edit your settings!")
-        ));
+    private Material getVisibilityMaterial(String text) {
+        if(!text.contains("/")) {
+            return Material.getMaterial(text);
+        }
 
-        player.getInventory().setItem(1, ItemUtils.getItemStack(
-                Material.BLAZE_POWDER,
-                "&fCosmetics Menu &6(Right Click)",
-                Arrays.asList("&fRight Click to open Cosmetics Menu!")
-        ));
+        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
+        String[] arr = text.split("/");
 
-        player.getInventory().setItem(0, ItemUtils.getItemStack(
-                Material.MAGMA_CREAM,
-                "&6&lServer Menu",
-                Arrays.asList("&fRight Click to open Server Menu!")
-        ));
+        if(generalStats.isPlayersVisibility()) {
+            return Material.getMaterial(arr[0]);
+        }
+        return Material.getMaterial(arr[1]);
+    }
+
+    private String getVisibilityStatus(String text) {
+        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
+        return text.replace("%visibility%", generalStats.isPlayersVisibility() ? "Visible" : "Hidden");
     }
 
     public static LobbyPlayer getLobbyPlayer(UUID uniqueId) {

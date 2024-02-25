@@ -1,6 +1,5 @@
 package me.fodded.spigotcore.configs;
 
-import lombok.Getter;
 import me.fodded.spigotcore.SpigotCore;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -10,8 +9,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class ConfigLoader {
@@ -19,14 +16,11 @@ public class ConfigLoader {
     private JavaPlugin plugin;
     private static ConfigLoader instance;
 
-    @Getter
-    private List<String> languagesList = new LinkedList<>();
     private final Map<String, FileConfiguration> configCacheMap = new HashMap<>();
 
     public ConfigLoader() {
         instance = this;
         plugin = SpigotCore.getInstance().getPlugin();
-        languagesList = getAllLanguages();
     }
 
     public void createConfig(String fileName) {

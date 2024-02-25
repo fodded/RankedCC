@@ -16,7 +16,7 @@ public class GeneralStats {
     private String prefix, displayedName, lastName, chosenLanguage;
     private boolean vanished, logging, playersVisibility, chatEnabled, friendRequestsEnabled;
 
-    private long lastLogin, firstLogin;
+    private long lastLogin, firstLogin, timePlayed;
 
     private List<UUID> friendList = new LinkedList<>();
 
@@ -33,5 +33,13 @@ public class GeneralStats {
         this.playersVisibility = true;
 
         this.firstLogin = System.currentTimeMillis();
+    }
+
+    public void addFriendToList(UUID uniqueId) {
+        friendList.add(uniqueId);
+    }
+
+    public void removeFriendFromList(UUID uniqueId) {
+        friendList.remove(uniqueId);
     }
 }

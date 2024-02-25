@@ -1,12 +1,42 @@
 scoreboard:
-  - "&a&lSKYWARS"
-  - '&7{time} &8lobby'
+  - "&6&lГЛАВНОЕ ЛОББИ"
+  - '&7{time} &8лобби'
   - ''
-  - '&fКиллы: &a{kills}'
+  - '&fПРИВИЛЕГИЯ'
+  - "&6&l{rank}"
   - ' '
-  - '&fРейтинг: &b{rating}'
+  - '&fДрузья: &6{friends}'
+  - '&fЧасов &fнаиграно: &6&l{time_played}'
   - '  '
-  - '&aranked.cc'
+  - "&fАйпи адрес &fсервера"
+  - '&6ranked.cc'
 
 chat-delay: "&cПожалуйста не спамьте в чате"
 no-chat-allowed: "&cВы не можете писать в чат потому что он отключен в ваших настройках"
+
+player-items:
+  1:
+    material: MAGMA_CREAM
+    name: "&6&lМеню Сервера"
+    description:
+      - "&fПравый клик чтобы открыть Меню Сервера!"
+  2:
+    material: BLAZE_POWDER
+    name: "&fМеню Косметики &6(Правый Клик)"
+    description:
+      - "&fПравый клик чтобы открыть Меню Сервера!"
+  7:
+    material: GOLD_NUGGET
+    name: "&fНастройки &6(Правый Клик)"
+    description:
+      - "&fПравый клик чтобы открыть Настройки!"
+  8:
+    material: GOLDEN_CARROT/CARROT_ITEM
+    name: "&fИгроки: %visibility% &6(Правый Клик)"
+    description:
+      - "&fПравый клик чтобы отключить/включить игроков!"
+  9:
+    material: FIREWORK_CHARGE
+    name: "&fВыбор меню &6(Правый Клик)"
+    description:
+      - "&fПравый клик чтобы открыть Выбор Лобби!"
