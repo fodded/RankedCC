@@ -22,14 +22,14 @@ public class LobbySelectorGui extends AbstractGui {
         int counter = 1;
         Inventory inventory = getInventory();
 
-        for(Map.Entry entry : SpigotServerManager.getInstance().getPlayersServerMap("Skywars-Lobby").entrySet()) {
+        for(Map.Entry entry : SpigotServerManager.getInstance().getPlayersServerMap("Main-Lobby").entrySet()) {
             String serverName = (String) entry.getKey();
             int playersOnline = (int) entry.getValue();
 
             boolean thisServer = serverName.equalsIgnoreCase(SpigotCore.getInstance().getServerName());
             ItemStack itemStack = ItemUtils.getItemStack(
                     (thisServer ? Material.RECORD_11 : Material.GOLD_RECORD),
-                    (thisServer ? "&c" : "&f") + "Skywars Lobby &6#" + counter,
+                    (thisServer ? "&c" : "&f") + "Main Lobby &6#" + counter,
                     Arrays.asList(
                             "&fPlayers: " + playersOnline + "/" + Bukkit.getMaxPlayers(),
                             thisServer ? "&cAlready connected" : "&6&lClick to connect!"),

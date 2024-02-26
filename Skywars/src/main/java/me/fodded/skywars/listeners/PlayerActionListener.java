@@ -24,7 +24,7 @@ public class PlayerActionListener implements Listener {
 
         Block block = player.getWorld().getBlockAt(player.getLocation().subtract(0,2,0));
         if(!block.getType().equals(Material.AIR)){
-            Vector v = player.getLocation().getDirection().multiply(1).setY(1);
+            Vector v = player.getLocation().getDirection().multiply(new Vector(2.5, 1, 2.5)).multiply(1).setY(1);
             player.setVelocity(v);
         }
 

@@ -1,5 +1,5 @@
 # The server's name needed to be shown in the menu and store amount of players
-# The name should be unique
+# The name should be unique and the same in this config and in the bungee config
 # For example Skywars-Lobby-1
 # Although all Game servers must contain "Game" in their name and all Lobby server must contain "Lobby"
 server: server

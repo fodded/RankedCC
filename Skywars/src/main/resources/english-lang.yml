@@ -11,7 +11,7 @@ scoreboard:
   - "&fServer ip &faddress"
   - '&6ranked.cc'
 
-chat-delay: "&cPlease do not spam in the chat."
+chat-delay: "&cPlease do not spam."
 no-chat-allowed: "&cYou cannot use chat because it's disabled in your settings"
 
 player-items:
@@ -40,3 +40,39 @@ player-items:
     name: "&fLobby Menu &6(Right Click)"
     description:
       - "&fRight Click to open Lobby Menu!"
+
+menus-text:
+  languages:
+    name: "&fCurrent selected &6&lLanguage"
+    selected_language: "&6->"
+    description:
+      - "&fThis function translates menus in the language you choose"
+      - "&f"
+      - "%languages%"
+      - "&f"
+      - "&6Left Click &fto go to the next language"
+      - "&6Right Click &fto go to the previous language"
+  friends:
+    name: "&fReceive friend &6&lRequests"
+    replace_text: "&6Anyone%&cNo one"
+    description:
+      - "%friends_requests% &fcan send you friend requests now."
+      - "&fRight Click to turn on/off this setting."
+  chat:
+    name: "&fChat is %chat_enabled%"
+    replace_text: "&6&lEnabled%&c&lDisabled"
+    description:
+      - "&fThis function displays chat to you"
+      - "&fRight Click to turn &6on/off &fthis setting."
+  logs:
+    name: "&fLogging is %logs_enabled%"
+    replace_text: "&6&lEnabled%&c&lDisabled"
+    description:
+      - "&fThis function displays server logs to you"
+      - "&fRight Click to turn &6on/off &fthis setting."
+  vanish:
+    name: "&fVanish is %vanish_enabled%"
+    replace_text: "&6&lEnabled%&c&lDisabled"
+    description:
+      - "&fThis function hides you from players in lobbies"
+      - "&fRight Click to turn &6on/off &fthis setting."

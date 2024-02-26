@@ -14,13 +14,12 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class FriendRequestSetting extends AbstractGuiSetting {
+public class VanishEnabledSetting extends AbstractGuiSetting {
 
-    public FriendRequestSetting(UUID uniqueId, Rank requiredRank) {
+    public VanishEnabledSetting(UUID uniqueId, Rank requiredRank) {
         super(uniqueId, requiredRank);
         if(!Rank.hasPermission(getRequiredRank(), getUniqueID())) {
             return;
@@ -34,36 +33,28 @@ public class FriendRequestSetting extends AbstractGuiSetting {
         Configuration config = LanguageManager.getInstance().getLanguageConfig(getUniqueID());
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueID());
 
-        boolean isFriendRequests = generalStats.isFriendRequestsEnabled();
-        String name = config.getString("menus-text.friends.name");
-        List<String> lore = getPlaceholder(config.getStringList("menus-text.friends.description"), isFriendRequests);
+        boolean isVanishEnabled = generalStats.isVanished();
+        String name = getPlaceholder(config.getString("menus-text.vanish.name"), isVanishEnabled);
+        List<String> lore = config.getStringList("menus-text.vanish.description");
 
         setItemStack(ItemUtils.getItemStack(
-                isFriendRequests ? Material.PAPER : Material.EMPTY_MAP,
+                isVanishEnabled ? Material.PAPER : Material.EMPTY_MAP,
                 name,
                 lore,
-                isFriendRequests
+                isVanishEnabled
         ));
     }
 
-    private List<String> getPlaceholder(List<String> lore, boolean isFriendRequests) {
-        List<String> listToReturn = new LinkedList<>();
-
+    private String getPlaceholder(String text, boolean isVanishEnabled) {
         Configuration config = LanguageManager.getInstance().getLanguageConfig(getUniqueID());
-        String replaceText = config.getString("menus-text.friends.replace_text");
-
-        for(String text : lore) {
-            listToReturn.add(
-                    text.replace("%friends_requests%", isFriendRequests ? replaceText.split("%")[0] : replaceText.split("%")[1])
-            );
-        }
-        return listToReturn;
+        String replaceText = config.getString("menus-text.vanish.replace_text");
+        return text.replace("%vanish_enabled%", isVanishEnabled ? replaceText.split("%")[0] : replaceText.split("%")[1]);
     }
 
     @Override
     public void onClick(InventoryClickEvent event, Player player) {
         GeneralStatsDataManager.getInstance().applyChangeToRedis(
-                getUniqueID(), generalStats -> generalStats.setFriendRequestsEnabled(!generalStats.isFriendRequestsEnabled())
+                getUniqueID(), generalStats -> generalStats.setVanished(!generalStats.isVanished())
         );
 
         player.playSound(player.getLocation(), Sound.CLICK, 1.0f, 1.0f);

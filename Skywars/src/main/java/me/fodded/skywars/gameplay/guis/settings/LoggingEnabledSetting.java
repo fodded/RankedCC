@@ -14,13 +14,12 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class FriendRequestSetting extends AbstractGuiSetting {
+public class LoggingEnabledSetting extends AbstractGuiSetting {
 
-    public FriendRequestSetting(UUID uniqueId, Rank requiredRank) {
+    public LoggingEnabledSetting(UUID uniqueId, Rank requiredRank) {
         super(uniqueId, requiredRank);
         if(!Rank.hasPermission(getRequiredRank(), getUniqueID())) {
             return;
@@ -34,36 +33,28 @@ public class FriendRequestSetting extends AbstractGuiSetting {
         Configuration config = LanguageManager.getInstance().getLanguageConfig(getUniqueID());
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueID());
 
-        boolean isFriendRequests = generalStats.isFriendRequestsEnabled();
-        String name = config.getString("menus-text.friends.name");
-        List<String> lore = getPlaceholder(config.getStringList("menus-text.friends.description"), isFriendRequests);
+        boolean isLoggingEnabled = generalStats.isLogging();
+        String name = getPlaceholder(config.getString("menus-text.logs.name"), isLoggingEnabled);
+        List<String> lore = config.getStringList("menus-text.logs.description");
 
         setItemStack(ItemUtils.getItemStack(
-                isFriendRequests ? Material.PAPER : Material.EMPTY_MAP,
+                isLoggingEnabled ? Material.PAPER : Material.EMPTY_MAP,
                 name,
                 lore,
-                isFriendRequests
+                isLoggingEnabled
         ));
     }
 
-    private List<String> getPlaceholder(List<String> lore, boolean isFriendRequests) {
-        List<String> listToReturn = new LinkedList<>();
-
+    private String getPlaceholder(String text, boolean isLoggingEnabled) {
         Configuration config = LanguageManager.getInstance().getLanguageConfig(getUniqueID());
-        String replaceText = config.getString("menus-text.friends.replace_text");
-
-        for(String text : lore) {
-            listToReturn.add(
-                    text.replace("%friends_requests%", isFriendRequests ? replaceText.split("%")[0] : replaceText.split("%")[1])
-            );
-        }
-        return listToReturn;
+        String replaceText = config.getString("menus-text.logs.replace_text");
+        return text.replace("%logs_enabled%", isLoggingEnabled ? replaceText.split("%")[0] : replaceText.split("%")[1]);
     }
 
     @Override
     public void onClick(InventoryClickEvent event, Player player) {
         GeneralStatsDataManager.getInstance().applyChangeToRedis(
-                getUniqueID(), generalStats -> generalStats.setFriendRequestsEnabled(!generalStats.isFriendRequestsEnabled())
+                getUniqueID(), generalStats -> generalStats.setLogging(!generalStats.isLogging())
         );
 
         player.playSound(player.getLocation(), Sound.CLICK, 1.0f, 1.0f);

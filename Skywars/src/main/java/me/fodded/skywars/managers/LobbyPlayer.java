@@ -118,10 +118,9 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
     }
 
     private boolean isFlooding() {
-        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
         Player player = Bukkit.getPlayer(getUniqueId());
-
         String floodingMessage = LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString("chat-delay");
+
         if(lastTimeUsed > System.currentTimeMillis()) {
             player.sendMessage(StringUtils.format(floodingMessage));
             return true;
