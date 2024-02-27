@@ -64,6 +64,6 @@ public class ChatEnabledSetting extends AbstractGuiSetting {
             }
 
             new SettingsGui(player);
-        }, 2L);
+        }, 3L);
     }
 }

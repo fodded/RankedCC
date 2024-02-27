@@ -9,7 +9,7 @@ import java.util.UUID;
 @Getter
 public enum Rank {
 
-    ADMIN("&6&lADMIN &a", 8),
+    ADMIN("&6&lADMIN &6", 8),
     MODERATOR("&2&lMODERATOR &2", 7),
     HELPER("&e&lHELPER &e", 6),
     YOUTUBE("&c&lYOUTUBE &c", 5),
@@ -35,5 +35,14 @@ public enum Rank {
         int requiredPriority = minimumRank.getPriority();
 
         return requiredPriority <= playerPriority;
+    }
+
+    public static Rank getRank(String rank) {
+        for(Rank eachRank : values()) {
+            if(eachRank.name().equalsIgnoreCase(rank)) {
+                return eachRank;
+            }
+        }
+        return null;
     }
 }

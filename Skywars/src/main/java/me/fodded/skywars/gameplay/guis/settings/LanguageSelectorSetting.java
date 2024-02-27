@@ -101,6 +101,6 @@ public class LanguageSelectorSetting extends AbstractGuiSetting {
             LobbyPlayer lobbyPlayer = LobbyPlayer.getLobbyPlayer(player.getUniqueId());
             lobbyPlayer.setItemsToPlayerInventory();
             new SettingsGui(player);
-        }, 2L);
+        }, 3L);
     }
 }

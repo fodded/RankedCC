@@ -4,6 +4,7 @@ import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.skywars.Main;
+import me.fodded.skywars.managers.LobbyPlayer;
 import me.fodded.spigotcore.gameplay.gui.AbstractGuiSetting;
 import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.ItemUtils;
@@ -59,11 +60,16 @@ public class VanishEnabledSetting extends AbstractGuiSetting {
 
         player.playSound(player.getLocation(), Sound.CLICK, 1.0f, 1.0f);
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            if(player == null || !player.isOnline()) {
+            if(!player.isOnline()) {
                 return;
             }
 
+            for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
+                LobbyPlayer lobbyPlayer = LobbyPlayer.getLobbyPlayer(eachPlayer.getUniqueId());
+                lobbyPlayer.updateVisibility();
+            }
+
             new SettingsGui(player);
-        }, 2L);
+        }, 3L);
     }
 }

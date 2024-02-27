@@ -11,9 +11,9 @@ import java.util.UUID;
 public class GeneralStats {
 
     private final UUID uniqueId;
-    private Rank rank;
+    private Rank rank, disguisedRank;
 
-    private String prefix, displayedName, lastName, chosenLanguage;
+    private String prefix, disguisedName, lastName, disguisedSkinTexture, disguisedSkinSignature, chosenLanguage, lastLobby, ipAddress;
     private boolean vanished, logging, playersVisibility, chatEnabled, friendRequestsEnabled;
 
     private long lastLogin, firstLogin, timePlayed;
@@ -23,11 +23,13 @@ public class GeneralStats {
     public GeneralStats(UUID uniqueId) {
         this.uniqueId = uniqueId;
         this.rank = Rank.DEFAULT;
+        this.disguisedRank = Rank.DEFAULT;
 
         this.prefix = "";
         this.lastName = "";
-        this.displayedName = "";
+        this.disguisedName = "";
         this.chosenLanguage = "english";
+        this.lastLobby = "Main";
 
         this.chatEnabled = true;
         this.playersVisibility = true;

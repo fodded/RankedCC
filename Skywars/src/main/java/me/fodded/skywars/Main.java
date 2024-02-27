@@ -1,6 +1,7 @@
 package me.fodded.skywars;
 
 import lombok.Getter;
+import me.fodded.core.Core;
 import me.fodded.skywars.gameplay.commands.SetLobbyCommand;
 import me.fodded.skywars.listeners.PlayerActionListener;
 import me.fodded.skywars.listeners.PlayerConnectListener;
@@ -13,6 +14,7 @@ import me.fodded.spigotcore.gameplay.commands.CommandManager;
 import me.fodded.spigotcore.tasks.KeepDayTask;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.redisson.api.RMap;
 
 public class Main extends JavaPlugin {
 
@@ -54,6 +56,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
+        RMap<Integer, Integer> playersMap = Core.getInstance().getRedis().getRedissonClient().getMap("playersMap");
+        playersMap.remove(SpigotCore.getInstance().getServerName().substring("Main-Lobby".length()+1));
     }
 }

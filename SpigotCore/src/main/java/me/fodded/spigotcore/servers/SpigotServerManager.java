@@ -6,8 +6,9 @@ import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.servers.tasks.ServerPlayersAmountTask;
 import org.redisson.api.RMap;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.CompletableFuture;
 
 public class SpigotServerManager {
 
@@ -20,16 +21,17 @@ public class SpigotServerManager {
         instance = this;
         playersMap = Core.getInstance().getRedis().getRedissonClient().getMap("playersMap");
 
-        String serverName = SpigotCore.getInstance().getServerName();
-        ServerPlayersAmountTask serverPlayersAmountTask = new ServerPlayersAmountTask(serverName);
+        ServerPlayersAmountTask serverPlayersAmountTask = new ServerPlayersAmountTask();
         serverPlayersAmountTask.runTaskTimer(SpigotCore.getInstance().getPlugin(), 20L, 20L);
     }
 
     public void updatePlayerCount(int playersAmount) {
-        playersMap.put(
-                SpigotCore.getInstance().getServerName(),
-                playersAmount
-        );
+        CompletableFuture.runAsync(() -> {
+            playersMap.put(
+                    SpigotCore.getInstance().getServerName(),
+                    playersAmount
+            );
+        });
     }
 
     public Integer getAmountOfPlayers(String pattern) {
@@ -45,15 +47,19 @@ public class SpigotServerManager {
         return onlinePlayers;
     }
 
-    public Map<String, Integer> getPlayersServerMap(String pattern) {
-        Map<String, Integer> playersServerMap = new HashMap<>();
+    // Server Index : Server Online
+    public TreeMap<Integer, Integer> getPlayersServerMap(String pattern) {
+        TreeMap<Integer, Integer> playersServerMap = new TreeMap<>();
         for(Map.Entry entry : playersMap.entrySet()) {
             String serverName = (String) entry.getKey();
-            int playersOnTheServer = (int) entry.getValue();
-
-            if(serverName.contains(pattern)) {
-                playersServerMap.put(serverName, playersOnTheServer);
+            if(!serverName.contains(pattern)) {
+                continue;
             }
+
+            int playersOnTheServer = (int) entry.getValue();
+            int serverIndex = Integer.parseInt(serverName.substring(pattern.length()+1));
+
+            playersServerMap.put(serverIndex, playersOnTheServer);
         }
         return playersServerMap;
     }

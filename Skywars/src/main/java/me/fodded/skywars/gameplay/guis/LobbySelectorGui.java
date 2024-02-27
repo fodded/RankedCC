@@ -1,5 +1,6 @@
 package me.fodded.skywars.gameplay.guis;
 
+import me.fodded.skywars.managers.LobbyPlayer;
 import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.gameplay.gui.AbstractGui;
 import me.fodded.spigotcore.servers.SpigotServerManager;
@@ -8,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -19,33 +19,53 @@ public class LobbySelectorGui extends AbstractGui {
     public LobbySelectorGui(Player player) {
         super();
 
-        int counter = 1;
-        Inventory inventory = getInventory();
-
+        int index = 1;
         for(Map.Entry entry : SpigotServerManager.getInstance().getPlayersServerMap("Main-Lobby").entrySet()) {
-            String serverName = (String) entry.getKey();
-            int playersOnline = (int) entry.getValue();
+            int lobbyIndex = (int) entry.getKey();
+            int playersOnline = (Integer) entry.getValue();
 
-            boolean thisServer = serverName.equalsIgnoreCase(SpigotCore.getInstance().getServerName());
+            String serverName = "Main-Lobby-" + lobbyIndex;
+            boolean isThisServer = serverName.equalsIgnoreCase(SpigotCore.getInstance().getServerName());
+
             ItemStack itemStack = ItemUtils.getItemStack(
-                    (thisServer ? Material.RECORD_11 : Material.GOLD_RECORD),
-                    (thisServer ? "&c" : "&f") + "Main Lobby &6#" + counter,
+                    (isThisServer ? Material.RECORD_11 : Material.GOLD_RECORD),
+                    (isThisServer ? "&c" : "&f") + "Main Lobby &6#" + lobbyIndex,
                     Arrays.asList(
                             "&fPlayers: " + playersOnline + "/" + Bukkit.getMaxPlayers(),
-                            thisServer ? "&cAlready connected" : "&6&lClick to connect!"),
-                    thisServer,
-                    counter
+                            isThisServer ? "&cAlready connected" : "&6&lClick to connect!"),
+                    isThisServer,
+                    index
             );
 
-            inventory.setItem(counter-1, itemStack);
-            counter++;
+            setItem(itemStack, index++-1);
         }
-        player.openInventory(inventory);
+
+        player.openInventory(getInventory());
     }
 
     @Override
     public void onClick(InventoryClickEvent event, Player player) {
+        if(event.getCurrentItem() == null) {
+            return;
+        }
+
+        if(event.getCurrentItem().getItemMeta().getDisplayName() == null) {
+            return;
+        }
+
+        String itemName = event.getCurrentItem().getItemMeta().getDisplayName();
+        String serverName = "Main-Lobby-" + itemName.substring("&fMain Lobby &6#".length());
+
+        System.out.println(itemName);
+        System.out.println(serverName);
+
         event.setCancelled(true);
+        if(serverName.equalsIgnoreCase(SpigotCore.getInstance().getServerName())) {
+            return;
+        }
+
+        LobbyPlayer lobbyPlayer = LobbyPlayer.getLobbyPlayer(player.getUniqueId());
+        lobbyPlayer.sendPlayerToLobby(serverName);
     }
 
     @Override

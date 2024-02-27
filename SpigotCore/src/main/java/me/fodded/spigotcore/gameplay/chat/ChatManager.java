@@ -48,7 +48,11 @@ public class ChatManager implements Listener {
         }
 
         String prefix = generalStats.getPrefix().isEmpty() ? rank.getPrefix() : generalStats.getPrefix() + " ";
-        String displayedName = generalStats.getDisplayedName().isEmpty() ? player.getName() : generalStats.getDisplayedName();
+        if(!generalStats.getDisguisedName().isEmpty()) {
+            prefix = generalStats.getDisguisedRank().getPrefix();
+        }
+
+        String displayedName = generalStats.getDisguisedName().isEmpty() ? player.getName() : generalStats.getDisguisedName();
 
         String message = getFormattedMessage(event);
         for(Player eachPlayer : Bukkit.getOnlinePlayers()) {

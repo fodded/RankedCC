@@ -64,6 +64,6 @@ public class LoggingEnabledSetting extends AbstractGuiSetting {
             }
 
             new SettingsGui(player);
-        }, 2L);
+        }, 3L);
     }
 }

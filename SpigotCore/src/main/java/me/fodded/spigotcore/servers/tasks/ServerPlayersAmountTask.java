@@ -6,9 +6,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class ServerPlayersAmountTask extends BukkitRunnable {
 
-    private final String serverName;
-    public ServerPlayersAmountTask(String serverName) {
-        this.serverName = serverName;
+    public ServerPlayersAmountTask() {
+
     }
 
     @Override

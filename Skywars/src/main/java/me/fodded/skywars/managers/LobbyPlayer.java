@@ -1,6 +1,7 @@
 package me.fodded.skywars.managers;
 
 import lombok.Getter;
+import me.fodded.core.Core;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.core.user.AbstractNetworkPlayer;
@@ -20,11 +21,13 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
+import org.redisson.api.RTopic;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Getter
 public class LobbyPlayer extends AbstractNetworkPlayer {
@@ -70,6 +73,10 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
 
     public void initializePlayer() {
         setItemsToPlayerInventory();
+        GeneralStatsDataManager.getInstance().applyChangeToRedis(
+                getUniqueId(),
+                generalStats -> generalStats.setLastLobby(SpigotCore.getInstance().getServerName())
+        );
     }
 
     public void updateVisibility() {
@@ -144,6 +151,8 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
             // we do not show hidden staff to a player unless it's another staff member
             if(!eachPlayerGeneralStats.isVanished() || player.isOp()) {
                 player.showPlayer(eachPlayer);
+            } else if(eachPlayerGeneralStats.isVanished()) {
+                player.hidePlayer(eachPlayer);
             }
         }
     }
@@ -166,6 +175,15 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
                     ItemUtils.getItemStack(material, displayName,descriptionList, false, 1)
             );
         }
+    }
+
+    // We publish the information to redis and then catch it from bungee side
+    // This method should be used for lobbies only, e.g. Lobby-Skywars-1 would be Skywars
+    public void sendPlayerToLobby(String serverNamePattern) {
+        CompletableFuture.runAsync(() -> {
+            RTopic topic = Core.getInstance().getRedis().getRedissonClient().getTopic("sendPlayerToLobby");
+            topic.publish(getUniqueId() + ":" + serverNamePattern);
+        });
     }
 
     private Material getVisibilityMaterial(String text) {

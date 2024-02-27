@@ -3,8 +3,6 @@ package me.fodded.skywars.gameplay.scoreboard;
 import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
-import me.fodded.core.managers.stats.impl.skywars.ranked.RankedStats;
-import me.fodded.core.managers.stats.impl.skywars.ranked.RankedStatsDataManager;
 import me.fodded.spigotcore.gameplay.scoreboard.AbstractScoreboard;
 import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.StringUtils;
@@ -17,8 +15,10 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class SkywarsLobbyScoreboard extends AbstractScoreboard {
@@ -76,18 +76,23 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
 
     protected void updateTab() {
         Player player = Bukkit.getPlayer(getUniqueId());
+        boolean hasPermissions = Rank.hasPermission(Rank.HELPER, player.getUniqueId());
         for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
             if(!player.canSee(eachPlayer)) {
                 continue;
             }
 
-            setPrefix(eachPlayer);
+            setPrefix(eachPlayer, hasPermissions);
         }
     }
 
-    protected void setPrefix(Player eachPlayer) {
+    @Override
+    protected void setPrefix(Player eachPlayer, boolean hasPermissions) {
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(eachPlayer.getUniqueId());
         String prefix = generalStats.getPrefix().isEmpty() ? generalStats.getRank().getPrefix() : generalStats.getPrefix() + " ";
+        if(!generalStats.getDisguisedName().isEmpty()) {
+            prefix = generalStats.getDisguisedRank().getPrefix();
+        }
 
         String teamName = "0" + (Rank.values().length - generalStats.getRank().getPriority()) + generalStats.getRank();
 
@@ -98,6 +103,17 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
             team = scoreboard.registerNewTeam(teamName);
         }
 
+        String suffix = "";
+        if(hasPermissions && !generalStats.getDisguisedName().isEmpty()) {
+            suffix += "&c&lD";
+        }
+        if(hasPermissions && generalStats.isVanished()) {
+            suffix += "&c&lV";
+        }
+        if(!hasPermissions || (!generalStats.isVanished() && !generalStats.getDisguisedName().isEmpty())){
+            suffix = "&7";
+        }
+        team.setSuffix(StringUtils.format(" " + suffix));
         team.setPrefix(StringUtils.format(prefix));
         team.addEntry(eachPlayer.getName());
     }
@@ -110,26 +126,28 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
         List<String> scoreboardStrings = LanguageManager.getInstance().getLanguageConfig(uniqueId)
                 .getStringList("scoreboard");
 
-        RankedStats rankedStats = RankedStatsDataManager.getInstance().getCachedValue(uniqueId);
+        NumberFormat numberFormat = StringUtils.getNumberFormat();
         for(int i = 1; i < scoreboardStrings.size(); i++) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
-            NumberFormat numberFormat = NumberFormat.getInstance(new Locale("en", "US"));
+            StringBuilder sb = new StringBuilder(scoreboardStrings.get(i));
+            replaceAll(sb, "{time}", StringUtils.getDate());
+            replaceAll(sb, "{time_played}", Long.toString(TimeUnit.MILLISECONDS.toHours(generalStats.getTimePlayed())));
+            replaceAll(sb, "{friends}", numberFormat.format(generalStats.getFriendList().size()));
+            replaceAll(sb, "{rank}", generalStats.getRank().name());
+            replaceAll(sb, "{rank_prefix}", generalStats.getRank().getPrefix());
 
-            completedList.add(
-                    scoreboardStrings.get(i)
-                            .replace("{time}", dateFormat.format(System.currentTimeMillis()))
-                            .replace("{time_played}", TimeUnit.MILLISECONDS.toHours(generalStats.getTimePlayed())+"")
-                            .replace("{friends}", numberFormat.format(generalStats.getFriendList().size()))
-                            .replace("{rating}", numberFormat.format(rankedStats.getRankedSeasonStatsList().get(0).getRating()))
-                            .replace("{losses}", numberFormat.format(rankedStats.getLosses()))
-                            .replace("{deaths}", numberFormat.format(rankedStats.getDeaths()))
-                            .replace("{rank}", generalStats.getRank().name())
-                            .replace("{rank_prefix}", generalStats.getRank().getPrefix())
-                            .replace("{kills}", numberFormat.format(rankedStats.getKills()))
-            );
+            completedList.add(sb.toString());
         }
 
         Collections.reverse(completedList);
         return completedList;
+    }
+
+    private void replaceAll(StringBuilder sb, String target, String replacement) {
+        int index = sb.indexOf(target);
+        while(index != -1) {
+            sb.replace(index, index + target.length(), replacement);
+            index += replacement.length(); // Move to the end of the replacement
+            index = sb.indexOf(target, index);
+        }
     }
 }

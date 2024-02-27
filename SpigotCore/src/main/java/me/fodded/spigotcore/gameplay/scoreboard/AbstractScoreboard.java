@@ -34,7 +34,9 @@ public abstract class AbstractScoreboard {
 
     protected abstract void updateScoreboard();
     protected abstract void updateTab();
-    protected abstract void setPrefix(Player player);
+
+    protected abstract void setPrefix(Player eachPlayer, boolean hasPermissions);
+
     protected abstract List<String> getScoreboardStrings();
 
     public void removeScoreboard() {
