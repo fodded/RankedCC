@@ -3,7 +3,7 @@ scoreboard:
   - '&7{time} &8lobby'
   - ''
   - '&fRANK PACKAGE'
-  - "&6&l{rank}"
+  - "&e&l{rank}"
   - ' '
   - '&fFriends: &6{friends}'
   - '&fHours played: &6{time_played}'
@@ -12,7 +12,13 @@ scoreboard:
   - '&6ranked.cc'
 
 chat-delay: "&cPlease do not spam."
-no-chat-allowed: "&cYou cannot use chat because it's disabled in your settings"
+no-rank-found: "&cCouldn't find rank "
+no-chat-allowed: "&cYou cannot use chat because it's disabled in your settings."
+
+disguise:
+  rank-higher: "&cYou can not set disguised rank higher than you have right now."
+  player-exists: "&cThis player is present on the network, choose another name."
+  nick-not-allowed: "&cThis disguised name can not be used, requirements: username > 3 letters and username < 16 letters, does not contain illegal characters"
 
 player-items:
   1:

@@ -1,12 +1,7 @@
 package me.fodded.spigotcore.listeners;
 
-import me.fodded.core.managers.stats.impl.profile.GeneralStats;
-import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.core.model.DataManager;
 import me.fodded.core.model.GlobalDataManager;
-import me.fodded.spigotcore.SpigotCore;
-import me.fodded.spigotcore.gameplay.disguise.DisguiseManager;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,19 +24,6 @@ public class PlayerConnectListener implements Listener {
     @EventHandler
     public void onPlayerJoinSync(PlayerJoinEvent event) {
         event.setJoinMessage(null);
-        Bukkit.getScheduler().runTaskLater(SpigotCore.getInstance().getPlugin(), () -> {
-            Player player = event.getPlayer();
-            GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(player.getUniqueId());
-
-            if(!generalStats.getDisguisedName().isEmpty()) {
-                DisguiseManager.getInstance().setDisguise(
-                        player,
-                        generalStats.getDisguisedName(),
-                        generalStats.getDisguisedSkinTexture(),
-                        generalStats.getDisguisedSkinSignature()
-                );
-            }
-        }, 10L);
     }
 
     @EventHandler

@@ -1,6 +1,8 @@
 package me.fodded.spigotcore.utils;
 
+import me.fodded.spigotcore.languages.LanguageManager;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -32,5 +34,15 @@ public class StringUtils {
             numberFormat = NumberFormat.getInstance(new Locale("en", "US"));
         }
         return numberFormat;
+    }
+
+    public static void sendMessage(Player player, String configMessageKey) {
+        String message = StringUtils.format(LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString(configMessageKey));
+        player.sendMessage(message);
+    }
+
+    public static void sendMessage(Player player, String configMessageKey, String extraMessage) {
+        String message = StringUtils.format(LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString(configMessageKey));
+        player.sendMessage(message + extraMessage);
     }
 }

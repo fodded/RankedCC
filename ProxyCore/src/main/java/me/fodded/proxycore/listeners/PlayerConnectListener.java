@@ -17,24 +17,7 @@ public class PlayerConnectListener implements Listener {
 
     @EventHandler (priority = EventPriority.LOWEST)
     public void onPlayerJoin(PostLoginEvent event) {
-        ForkJoinPool.commonPool().submit(() -> {
-            ProxiedPlayer player = event.getPlayer();
-            UUID uniqueId = player.getUniqueId();
 
-            for (GlobalDataManager dataManager : DataManager.getInstance().getStatisticsList()) {
-                dataManager.loadFromDatabaseToRedis(uniqueId);
-
-                // we need to update the last name all the time player joins
-                if (dataManager instanceof GeneralStatsDataManager) {
-                    GeneralStatsDataManager generalStatsDataManager = (GeneralStatsDataManager) dataManager;
-                    generalStatsDataManager.applyChangeToRedis(uniqueId, generalStats -> generalStats.setLastName(player.getName()));
-                    generalStatsDataManager.applyChangeToRedis(uniqueId, generalStats -> generalStats.setLastLogin(System.currentTimeMillis()));
-                    generalStatsDataManager.applyChangeToRedis(uniqueId, generalStats -> generalStats.setIpAddress(player.getAddress().getAddress().getHostAddress()));
-                }
-
-                dataManager.getCachedValue(uniqueId);
-            }
-        });
     }
 
     @EventHandler (priority = EventPriority.LOWEST)

@@ -1,12 +1,8 @@
 package me.fodded.bungeecord.listeners;
 
-import me.fodded.bungeecord.Main;
 import me.fodded.bungeecord.serverhandlers.BungeeServerHandler;
 import me.fodded.bungeecord.serverhandlers.servers.LobbyServerInfoHandler;
 import me.fodded.bungeecord.utils.StringUtils;
-import me.fodded.core.managers.stats.impl.profile.GeneralStats;
-import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -19,7 +15,6 @@ import net.md_5.bungee.event.EventPriority;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class PlayerConnectListener implements Listener {
 
@@ -34,6 +29,7 @@ public class PlayerConnectListener implements Listener {
             event.getPlayer().disconnect(StringUtils.format("&cThe server is not available at moment"));
         }
 
+        /*
         ProxyServer.getInstance().getScheduler().schedule(Main.getInstance(), new Runnable() {
             @Override
             public void run() {
@@ -47,7 +43,7 @@ public class PlayerConnectListener implements Listener {
                     player.connect(serverInfo);
                 }
             }
-        }, 500, TimeUnit.MILLISECONDS);
+        }, 500, TimeUnit.MILLISECONDS);*/
     }
 
     private List<String> markedWords = new ArrayList<>(Arrays.asList("closed", "full", "shutdown", "restart", "went down"));

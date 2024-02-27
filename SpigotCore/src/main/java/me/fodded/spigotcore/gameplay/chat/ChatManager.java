@@ -1,6 +1,5 @@
 package me.fodded.spigotcore.gameplay.chat;
 
-import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.spigotcore.SpigotCore;
@@ -33,61 +32,67 @@ public class ChatManager implements Listener {
         Player player = event.getPlayer();
         event.setCancelled(true);
 
-        GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
-        GeneralStats generalStats = generalStatsDataManager.getCachedValue(player.getUniqueId());
-
-        if(!generalStats.isChatEnabled()) {
-            player.sendMessage(StringUtils.format(
-                    LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString("no-chat-allowed")
-            ));
-        }
-
-        Rank rank = generalStats.getRank();
-        if (isPlayerFlooding(event, rank, generalStats)) {
+        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(player.getUniqueId());
+        if (!generalStats.isChatEnabled()) {
+            sendMessage(player, "no-chat-allowed");
             return;
         }
 
-        String prefix = generalStats.getPrefix().isEmpty() ? rank.getPrefix() : generalStats.getPrefix() + " ";
-        if(!generalStats.getDisguisedName().isEmpty()) {
-            prefix = generalStats.getDisguisedRank().getPrefix();
+        if (isPlayerFlooding(player, generalStats)) {
+            sendMessage(player, "chat-delay");
+            return;
         }
 
-        String displayedName = generalStats.getDisguisedName().isEmpty() ? player.getName() : generalStats.getDisguisedName();
-
+        String prefix = getPrefix(generalStats);
+        String displayedName = getDisplayedName(player, generalStats);
         String message = getFormattedMessage(event);
-        for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
-            GeneralStats eachPlayerGeneralStats = GeneralStatsDataManager.getInstance().getCachedValue(eachPlayer.getUniqueId());
-            if(!eachPlayerGeneralStats.isChatEnabled()) {
-                continue;
-            }
 
-            eachPlayer.sendMessage(StringUtils.format(prefix + displayedName + "&f: ") + message);
+        broadcastMessage(prefix, displayedName, message);
+        floodMap.put(player.getUniqueId(), System.currentTimeMillis() + chatDelay);
+    }
+
+    private void sendMessage(Player player, String messageKey) {
+        String message = StringUtils.format(LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString(messageKey));
+        player.sendMessage(message);
+    }
+
+    private boolean isPlayerFlooding(Player player, GeneralStats generalStats) {
+        if (player.isOp()) {
+            return false;
         }
+        Long nextAllowedChatTime = floodMap.get(player.getUniqueId());
+        return nextAllowedChatTime != null && nextAllowedChatTime > System.currentTimeMillis();
+    }
 
-        floodMap.put(event.getPlayer().getUniqueId(), System.currentTimeMillis()+chatDelay);
+    private String getPrefix(GeneralStats generalStats) {
+        if (!generalStats.getPrefix().isEmpty()) {
+            return generalStats.getPrefix() + " ";
+        }
+        if (!generalStats.getDisguisedName().isEmpty()) {
+            return generalStats.getDisguisedRank().getPrefix();
+        }
+        return generalStats.getRank().getPrefix();
+    }
+
+    private String getDisplayedName(Player player, GeneralStats generalStats) {
+        return generalStats.getDisguisedName().isEmpty() ? player.getName() : generalStats.getDisguisedName();
     }
 
     private String getFormattedMessage(AsyncPlayerChatEvent event) {
         String message = event.getMessage();
-        if(event.getPlayer().isOp()) {
+        if (event.getPlayer().isOp()) {
             message = StringUtils.format(message);
         }
         return message;
     }
 
-    private boolean isPlayerFlooding(AsyncPlayerChatEvent event, Rank rank, GeneralStats generalStats) {
-        if(Bukkit.getPlayer(generalStats.getUniqueId()).isOp()) {
-            return false;
-        }
-        if (floodMap.containsKey(event.getPlayer().getUniqueId())) {
-            if (floodMap.get(event.getPlayer().getUniqueId()) > System.currentTimeMillis()) {
-                event.getPlayer().sendMessage(StringUtils.format(
-                        LanguageManager.getInstance().getLanguageConfig(generalStats.getUniqueId()).getString("chat-delay")
-                ));
-                return true;
+    private void broadcastMessage(String prefix, String displayedName, String message) {
+        String formattedMessage = StringUtils.format(prefix + displayedName + "&f: ") + message;
+        for (Player eachPlayer : Bukkit.getOnlinePlayers()) {
+            GeneralStats eachPlayerGeneralStats = GeneralStatsDataManager.getInstance().getCachedValue(eachPlayer.getUniqueId());
+            if (eachPlayerGeneralStats.isChatEnabled()) {
+                eachPlayer.sendMessage(formattedMessage);
             }
         }
-
-        return false;
     }
 }

@@ -3,12 +3,16 @@ package me.fodded.skywars.listeners;
 import me.fodded.core.managers.ranks.Rank;
 import me.fodded.skywars.managers.LobbyPlayer;
 import me.fodded.spigotcore.SpigotCore;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerConnectListener implements Listener {
 
@@ -19,8 +23,13 @@ public class PlayerConnectListener implements Listener {
 
     @EventHandler
     public void onJoinSync(PlayerJoinEvent event) {
-        LobbyPlayer lobbyPlayer = new LobbyPlayer(event.getPlayer().getUniqueId());
-        lobbyPlayer.handleJoin();
+        Player player = event.getPlayer();
+        LobbyPlayer lobbyPlayer = new LobbyPlayer(player.getUniqueId());
+
+        CompletableFuture<Void> loadStatistics = CompletableFuture.runAsync(() -> lobbyPlayer.loadDataAsync(player));
+        loadStatistics.thenRun(() -> {
+            Bukkit.getScheduler().runTask(SpigotCore.getInstance().getPlugin(), lobbyPlayer::handleJoin);
+        });
     }
 
     @EventHandler

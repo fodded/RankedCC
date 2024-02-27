@@ -1,5 +1,13 @@
 package me.fodded.core.managers.stats.operators;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import me.fodded.core.Core;
+import me.fodded.core.model.Database;
+import org.bson.Document;
+
+import java.util.regex.Pattern;
+
 public class DatabaseOperations {
 
     private static DatabaseOperations instance;
@@ -7,20 +15,20 @@ public class DatabaseOperations {
         instance = this;
     }
 
-    /*
-    public Object getStatistic(UUID uniqueId, Class statisticClass, String statistic) {
-        MongoCollection<Document> collection = Core.getInstance().getDatabase().getMongoClient()
-                .getDatabase("statistics")
-                .getCollection(statisticClass.getClass().getSimpleName());
+    public boolean doesCollectionHaveFieldValue(String collectionName, String field, Object value) {
+        MongoCollection<Document> collection = Core.getInstance().getDatabase()
+                .getMongoDatabase(Database.STATISTICS_DB)
+                .getCollection(collectionName);
 
-        Document playerDocument = collection.find(new Document("uniqueId", uniqueId.toString())).first();
-        if(playerDocument == null) {
-            return null;
+        if(value instanceof String) {
+            Pattern pattern = Pattern.compile(Pattern.quote((String) value), Pattern.CASE_INSENSITIVE);
+            return collection.countDocuments(new Document(field, pattern)) > 0;
         }
 
-        return playerDocument.get(statistic);
+        return collection.countDocuments(Filters.eq(field, value)) > 0;
     }
 
+    /*
     public void updateStatistic(UUID uniqueId, String collectionName, String statistic, Object value) {
         MongoCollection<Document> collection = Core.getInstance().getDatabase().getMongoClient()
                 .getDatabase("statistics")

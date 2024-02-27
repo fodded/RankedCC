@@ -4,7 +4,6 @@ import lombok.Getter;
 import me.fodded.core.Core;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
-import me.fodded.core.user.AbstractNetworkPlayer;
 import me.fodded.skywars.Main;
 import me.fodded.skywars.gameplay.guis.CosmeticsGui;
 import me.fodded.skywars.gameplay.guis.LobbySelectorGui;
@@ -13,6 +12,8 @@ import me.fodded.skywars.gameplay.guis.settings.SettingsGui;
 import me.fodded.skywars.gameplay.scoreboard.SkywarsLobbyScoreboard;
 import me.fodded.skywars.tasks.UpdateScoreboardTask;
 import me.fodded.spigotcore.SpigotCore;
+import me.fodded.spigotcore.gameplay.disguise.DisguiseManager;
+import me.fodded.spigotcore.gameplay.player.AbstractServerPlayer;
 import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.ItemUtils;
 import me.fodded.spigotcore.utils.StringUtils;
@@ -23,45 +24,41 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.redisson.api.RTopic;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Getter
-public class LobbyPlayer extends AbstractNetworkPlayer {
-
-    private static Map<UUID, LobbyPlayer> lobbyPlayerMap = new HashMap<>();
-
-    private long lastTimeUsed = 0;
+public class LobbyPlayer extends AbstractServerPlayer {
 
     public LobbyPlayer(UUID uniqueId) {
         super(uniqueId);
-
-        lobbyPlayerMap.put(uniqueId, this);
+        addPlayerToCache();
     }
 
     public void handleJoin() {
         Player player = Bukkit.getPlayer(getUniqueId());
-        player.teleport(ServerLocations.getInstance().getLobbyLocation());
-        player.setAllowFlight(true); // needed for double jump
-        player.setGameMode(GameMode.ADVENTURE);
+        if(player == null || !player.isOnline()) {
+            return;
+        }
+
+        updateDisguise();
+        resetPlayerAbilities();
+        setItemsToPlayerInventory();
+        updateVisibilityForEveryone();
 
         UpdateScoreboardTask updateScoreboardTask = new UpdateScoreboardTask(player);
-        updateScoreboardTask.runTaskTimer(SpigotCore.getInstance().getPlugin(), 10L, 20L);
+        updateScoreboardTask.runTaskTimer(SpigotCore.getInstance().getPlugin(), 0, 20L);
 
-        // We need to give player items with a small delay, so we are sure we have enough time to load data
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            if(player.isOnline()) {
-                initializePlayer();
-
-                for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
-                    LobbyPlayer lobbyPlayer = getLobbyPlayer(eachPlayer.getUniqueId());
-                    lobbyPlayer.updateVisibility();
-                }
-            }
-        }, 10L);
+        GeneralStatsDataManager.getInstance().applyChangeToRedis(
+                getUniqueId(),
+                generalStats -> generalStats.setLastLobby(SpigotCore.getInstance().getServerName())
+        );
+    }
+    public void sendMessage(String configMessageKey) {
+        Player player = Bukkit.getPlayer(getUniqueId());
+        String message = StringUtils.format(LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString(configMessageKey));
+        player.sendMessage(message);
     }
 
     public void handleQuit() {
@@ -69,14 +66,55 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
         if(skywarsLobbyScoreboard != null) {
             skywarsLobbyScoreboard.removeScoreboard();
         }
+
+        removePlayerFromList();
     }
 
-    public void initializePlayer() {
-        setItemsToPlayerInventory();
-        GeneralStatsDataManager.getInstance().applyChangeToRedis(
-                getUniqueId(),
-                generalStats -> generalStats.setLastLobby(SpigotCore.getInstance().getServerName())
-        );
+    public void updateDisguise() {
+        Player player = Bukkit.getPlayer(getUniqueId());
+        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(player.getUniqueId());
+        if(!generalStats.getDisguisedName().isEmpty()) {
+            DisguiseManager.getInstance().setDisguise(
+                    player,
+                    generalStats.getDisguisedName(),
+                    generalStats.getDisguisedSkinTexture(),
+                    generalStats.getDisguisedSkinSignature()
+            );
+        }
+    }
+
+    public void resetPlayerAbilities() {
+        Player player = Bukkit.getPlayer(getUniqueId());
+        player.teleport(ServerLocations.getInstance().getLobbyLocation());
+        player.setAllowFlight(true); // needed for double jump
+        player.setGameMode(GameMode.ADVENTURE);
+    }
+
+    private void updateVisibilityForEveryone() {
+        for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
+            LobbyPlayer lobbyPlayer = getLobbyPlayer(eachPlayer.getUniqueId());
+            lobbyPlayer.updateVisibility();
+        }
+    }
+
+    public void setItemsToPlayerInventory() {
+        Player player = Bukkit.getPlayer(getUniqueId());
+        if(player == null) {
+            return;
+        }
+
+        Configuration languageConfig = LanguageManager.getInstance().getLanguageConfig(getUniqueId());
+        for(String path : languageConfig.getConfigurationSection("player-items").getKeys(false)) {
+            int slot = Integer.parseInt(path) - 1;
+            String displayName = getVisibilityStatus(languageConfig.getString("player-items." + path + ".name"));
+            Material material = getVisibilityMaterial(languageConfig.getString("player-items." + path + ".material"));
+            List<String> descriptionList = languageConfig.getStringList("player-items." + path + ".description");
+
+            player.getInventory().setItem(
+                    slot,
+                    ItemUtils.getItemStack(material, displayName,descriptionList, false, 1)
+            );
+        }
     }
 
     public void updateVisibility() {
@@ -124,18 +162,6 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
         }
     }
 
-    private boolean isFlooding() {
-        Player player = Bukkit.getPlayer(getUniqueId());
-        String floodingMessage = LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString("chat-delay");
-
-        if(lastTimeUsed > System.currentTimeMillis()) {
-            player.sendMessage(StringUtils.format(floodingMessage));
-            return true;
-        }
-        lastTimeUsed = System.currentTimeMillis() + 3000;
-        return false;
-    }
-
     private void hidePlayers() {
         Player player = Bukkit.getPlayer(getUniqueId());
         for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
@@ -154,26 +180,6 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
             } else if(eachPlayerGeneralStats.isVanished()) {
                 player.hidePlayer(eachPlayer);
             }
-        }
-    }
-
-    public void setItemsToPlayerInventory() {
-        Player player = Bukkit.getPlayer(getUniqueId());
-        if(player == null) {
-            return;
-        }
-
-        Configuration languageConfig = LanguageManager.getInstance().getLanguageConfig(getUniqueId());
-        for(String path : languageConfig.getConfigurationSection("player-items").getKeys(false)) {
-            int slot = Integer.parseInt(path) - 1;
-            String displayName = getVisibilityStatus(languageConfig.getString("player-items." + path + ".name"));
-            Material material = getVisibilityMaterial(languageConfig.getString("player-items." + path + ".material"));
-            List<String> descriptionList = languageConfig.getStringList("player-items." + path + ".description");
-
-            player.getInventory().setItem(
-                    slot,
-                    ItemUtils.getItemStack(material, displayName,descriptionList, false, 1)
-            );
         }
     }
 
@@ -206,8 +212,8 @@ public class LobbyPlayer extends AbstractNetworkPlayer {
     }
 
     public static LobbyPlayer getLobbyPlayer(UUID uniqueId) {
-        if(lobbyPlayerMap.containsKey(uniqueId)) {
-            return lobbyPlayerMap.get(uniqueId);
+        if(isInCache(uniqueId)) {
+            return (LobbyPlayer) AbstractServerPlayer.getPlayerFromList(uniqueId);
         }
         return new LobbyPlayer(uniqueId);
     }

@@ -89,12 +89,13 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
     @Override
     protected void setPrefix(Player eachPlayer, boolean hasPermissions) {
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(eachPlayer.getUniqueId());
-        String prefix = generalStats.getPrefix().isEmpty() ? generalStats.getRank().getPrefix() : generalStats.getPrefix() + " ";
-        if(!generalStats.getDisguisedName().isEmpty()) {
-            prefix = generalStats.getDisguisedRank().getPrefix();
-        }
+        boolean isPlayerDisguised = !generalStats.getDisguisedName().isEmpty();
 
-        String teamName = "0" + (Rank.values().length - generalStats.getRank().getPriority()) + generalStats.getRank();
+        Rank rank = getRank(generalStats, isPlayerDisguised);
+
+        String prefix = getPrefix(rank, generalStats, isPlayerDisguised);
+        String suffix = getPlayerSuffix(hasPermissions, isPlayerDisguised, generalStats);
+        String teamName = "0" + (Rank.values().length - rank.getPriority()) + rank;
 
         Scoreboard scoreboard = getScoreboard();
         Team team = scoreboard.getTeam(teamName);
@@ -103,19 +104,39 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
             team = scoreboard.registerNewTeam(teamName);
         }
 
+        team.setSuffix(StringUtils.format(" " + suffix));
+        team.setPrefix(StringUtils.format(prefix));
+        team.addEntry(eachPlayer.getName());
+    }
+
+    private String getPrefix(Rank rank, GeneralStats generalStats, boolean isPlayerDisguised) {
+        String prefix = rank.getPrefix();
+        if(!generalStats.getPrefix().isEmpty() && !isPlayerDisguised) {
+            prefix = generalStats.getPrefix();
+        }
+        return prefix;
+    }
+
+    private Rank getRank(GeneralStats generalStats, boolean isPlayerDisguised) {
+        Rank rank = generalStats.getRank();
+        if(isPlayerDisguised) {
+            rank = generalStats.getDisguisedRank();
+        }
+        return rank;
+    }
+
+    private String getPlayerSuffix(boolean hasPermissions, boolean isPlayerDisguised, GeneralStats generalStats) {
         String suffix = "";
-        if(hasPermissions && !generalStats.getDisguisedName().isEmpty()) {
+        if(hasPermissions && isPlayerDisguised) {
             suffix += "&c&lD";
         }
         if(hasPermissions && generalStats.isVanished()) {
             suffix += "&c&lV";
         }
-        if(!hasPermissions || (!generalStats.isVanished() && !generalStats.getDisguisedName().isEmpty())){
+        if(!hasPermissions || (!generalStats.isVanished() && !isPlayerDisguised)){
             suffix = "&7";
         }
-        team.setSuffix(StringUtils.format(" " + suffix));
-        team.setPrefix(StringUtils.format(prefix));
-        team.addEntry(eachPlayer.getName());
+        return suffix;
     }
 
     protected List<String> getScoreboardStrings() {
@@ -123,7 +144,8 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(uniqueId);
 
         List<String> completedList = new LinkedList<>();
-        List<String> scoreboardStrings = LanguageManager.getInstance().getLanguageConfig(uniqueId)
+        List<String> scoreboardStrings = LanguageManager.getInstance()
+                .getLanguageConfig(uniqueId)
                 .getStringList("scoreboard");
 
         NumberFormat numberFormat = StringUtils.getNumberFormat();
