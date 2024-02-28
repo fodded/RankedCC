@@ -38,13 +38,13 @@ public class ChatManager implements Listener {
             return;
         }
 
-        if (isPlayerFlooding(player, generalStats)) {
+        if (isPlayerFlooding(player)) {
             sendMessage(player, "chat-delay");
             return;
         }
 
         String prefix = getPrefix(generalStats);
-        String displayedName = getDisplayedName(player, generalStats);
+        String displayedName = player.getName();
         String message = getFormattedMessage(event);
 
         broadcastMessage(prefix, displayedName, message);
@@ -56,7 +56,7 @@ public class ChatManager implements Listener {
         player.sendMessage(message);
     }
 
-    private boolean isPlayerFlooding(Player player, GeneralStats generalStats) {
+    private boolean isPlayerFlooding(Player player) {
         if (player.isOp()) {
             return false;
         }
@@ -72,10 +72,6 @@ public class ChatManager implements Listener {
             return generalStats.getDisguisedRank().getPrefix();
         }
         return generalStats.getRank().getPrefix();
-    }
-
-    private String getDisplayedName(Player player, GeneralStats generalStats) {
-        return generalStats.getDisguisedName().isEmpty() ? player.getName() : generalStats.getDisguisedName();
     }
 
     private String getFormattedMessage(AsyncPlayerChatEvent event) {

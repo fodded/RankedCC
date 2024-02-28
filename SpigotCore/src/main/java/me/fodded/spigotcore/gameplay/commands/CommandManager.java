@@ -23,6 +23,7 @@ public class CommandManager {
         commandsList.add(new StatsCommand());
         commandsList.add(new ConfigReloadCommand());
         commandsList.add(new NickCommand());
+        commandsList.add(new RevealNickCommand());
     }
 
     public void addCommand(PluginCommand command) {

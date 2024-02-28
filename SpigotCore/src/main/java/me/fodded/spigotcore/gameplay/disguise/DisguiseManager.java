@@ -44,7 +44,6 @@ public class DisguiseManager {
 
         try {
             setDisguiseTask.get();
-
             updatePlayerVisibility(player);
             GeneralStatsDataManager.getInstance().applyChangeToRedis(player.getUniqueId(), generalStats -> generalStats.setDisguisedName(fakeName));
         } catch (InterruptedException | ExecutionException e) {
@@ -62,7 +61,6 @@ public class DisguiseManager {
 
         try {
             setDisguiseTask.get();
-
             updatePlayerVisibility(player);
             GeneralStatsDataManager.getInstance().applyChangeToRedis(player.getUniqueId(), generalStats -> generalStats.setDisguisedName(fakeName));
         } catch (InterruptedException | ExecutionException e) {

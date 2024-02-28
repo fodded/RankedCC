@@ -22,7 +22,6 @@ public abstract class AbstractServerInfoHandler {
         this.playersOnline = 0;
     }
 
-
     public ServerInfo getProxyServer(String serverName) {
         for (Map.Entry entry : ProxyServer.getInstance().getServers().entrySet()) {
             ServerInfo proxyServer = (ServerInfo) entry.getValue();

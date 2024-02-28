@@ -99,6 +99,13 @@ public abstract class GlobalDataManager<K, V> {
         }
     }
 
+    public V getRedisValue(K key) {
+        if(isInRedis(key)) {
+            return redissonMap.get(key);
+        }
+        return null;
+    }
+
     public V getCachedValue(K key) {
         return loadingCache.get(key);
     }

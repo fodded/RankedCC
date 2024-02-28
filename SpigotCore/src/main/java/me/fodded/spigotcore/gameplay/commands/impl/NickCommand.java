@@ -1,14 +1,20 @@
 package me.fodded.spigotcore.gameplay.commands.impl;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import me.fodded.core.Core;
 import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.core.managers.stats.operators.DatabaseOperations;
+import me.fodded.core.model.Database;
 import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.gameplay.commands.CommandInfo;
 import me.fodded.spigotcore.gameplay.commands.PluginCommand;
 import me.fodded.spigotcore.gameplay.disguise.DisguiseManager;
+import me.fodded.spigotcore.gameplay.player.AbstractServerPlayer;
 import me.fodded.spigotcore.utils.StringUtils;
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,6 +29,7 @@ public class NickCommand extends PluginCommand {
         if(args.length == 1) {
             if(args[0].equalsIgnoreCase("reset")) {
                 resetDisguisedNick(player);
+                AbstractServerPlayer.sendLogToPlayers("&6[LOG] &fPlayer" + player.getName() + " &freset his disguise");
                 return;
             }
         }
@@ -62,10 +69,24 @@ public class NickCommand extends PluginCommand {
             }
 
             Bukkit.getScheduler().runTask(SpigotCore.getInstance().getPlugin(), () -> {
+                AbstractServerPlayer.sendLogToPlayers("&6[LOG] &fPlayer " + player.getName() + " &fchanged his nick to &6" + disguisedNick);
                 DisguiseManager.getInstance().setDisguise(player, disguisedNick);
+                addDisguiseToHistory(player, disguisedNick, disguisedRank);
                 GeneralStatsDataManager.getInstance().applyChangeToRedis(player.getUniqueId(), updatedGeneralStats -> updatedGeneralStats.setDisguisedRank(disguisedRank));
             });
         });
+    }
+
+    private void addDisguiseToHistory(Player player, String disguisedNick, Rank disguisedRank) {
+        MongoDatabase mongoDatabase = Core.getInstance().getDatabase().getMongoDatabase(Database.STATISTICS_DB);
+        MongoCollection<Document> collection = mongoDatabase.getCollection("DisguiseHistory");
+
+        Document document = new Document("uniqueId", player.getUniqueId().toString())
+                .append("disguisedNick", disguisedNick)
+                .append("disguisedRank", disguisedRank.name())
+                .append("time", System.currentTimeMillis());
+
+        collection.insertOne(document);
     }
 
     private void resetDisguisedNick(Player player) {

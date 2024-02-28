@@ -1,16 +1,19 @@
 package me.fodded.spigotcore.gameplay.player;
 
 import lombok.Getter;
+import me.fodded.core.Core;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.core.model.DataManager;
 import me.fodded.core.model.GlobalDataManager;
 import me.fodded.spigotcore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.redisson.api.RTopic;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public abstract class AbstractServerPlayer implements IServerPlayer {
 
@@ -53,6 +56,13 @@ public abstract class AbstractServerPlayer implements IServerPlayer {
 
         lastTimeUsed = System.currentTimeMillis() + 3000;
         return false;
+    }
+
+    public static void sendLogToPlayers(String message) {
+        CompletableFuture.runAsync(() -> {
+            RTopic topic = Core.getInstance().getRedis().getRedissonClient().getTopic("sendLogsToPlayer");
+            topic.publish(message);
+        });
     }
 
     public void addPlayerToCache() {

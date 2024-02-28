@@ -168,7 +168,7 @@ public class SkywarsLobbyScoreboard extends AbstractScoreboard {
         int index = sb.indexOf(target);
         while(index != -1) {
             sb.replace(index, index + target.length(), replacement);
-            index += replacement.length(); // Move to the end of the replacement
+            index += replacement.length();
             index = sb.indexOf(target, index);
         }
     }

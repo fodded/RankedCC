@@ -55,11 +55,6 @@ public class LobbyPlayer extends AbstractServerPlayer {
                 generalStats -> generalStats.setLastLobby(SpigotCore.getInstance().getServerName())
         );
     }
-    public void sendMessage(String configMessageKey) {
-        Player player = Bukkit.getPlayer(getUniqueId());
-        String message = StringUtils.format(LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString(configMessageKey));
-        player.sendMessage(message);
-    }
 
     public void handleQuit() {
         SkywarsLobbyScoreboard skywarsLobbyScoreboard = (SkywarsLobbyScoreboard) SkywarsLobbyScoreboard.getScoreboardManager(getUniqueId());
@@ -190,6 +185,12 @@ public class LobbyPlayer extends AbstractServerPlayer {
             RTopic topic = Core.getInstance().getRedis().getRedissonClient().getTopic("sendPlayerToLobby");
             topic.publish(getUniqueId() + ":" + serverNamePattern);
         });
+    }
+
+    public void sendMessage(String configMessageKey) {
+        Player player = Bukkit.getPlayer(getUniqueId());
+        String message = StringUtils.format(LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString(configMessageKey));
+        player.sendMessage(message);
     }
 
     private Material getVisibilityMaterial(String text) {

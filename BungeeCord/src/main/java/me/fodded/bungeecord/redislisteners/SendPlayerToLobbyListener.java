@@ -1,14 +1,13 @@
-package me.fodded.bungeecord;
+package me.fodded.bungeecord.redislisteners;
 
 import me.fodded.bungeecord.serverhandlers.servers.LobbyServerInfoHandler;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import org.redisson.api.listener.MessageListener;
 
 import java.util.UUID;
 
-public class BungeeRedisListener implements MessageListener {
+public class SendPlayerToLobbyListener implements IBungeeRedisListener {
 
     @Override
     public void onMessage(CharSequence channel, Object msg) {
@@ -22,9 +21,5 @@ public class BungeeRedisListener implements MessageListener {
 
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerUniqueId);
         player.connect(server);
-    }
-
-    private void onPlayerSendToLobby() {
-
     }
 }
