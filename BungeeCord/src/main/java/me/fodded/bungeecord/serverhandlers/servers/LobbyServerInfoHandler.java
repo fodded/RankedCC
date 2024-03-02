@@ -31,7 +31,7 @@ public class LobbyServerInfoHandler extends AbstractServerInfoHandler {
         // Here we get a server which is not running a game right now and has the most players on atm
         for(LobbyServerInfoHandler serverInfoHandler : lobbyServerInfoHandlerList) {
             // We check if the server we are seeking for is not the same we are currently on
-            if(!serverInfoHandler.getServerName().equalsIgnoreCase(serverCurrentlyOn)) continue;
+            if(serverInfoHandler.getServerName().equalsIgnoreCase(serverCurrentlyOn)) continue;
             if(serverInfoHandler.getPlayersOnline() >= 100) continue;
             return getProxyServer(serverInfoHandler.getServerName());
         }
@@ -48,7 +48,7 @@ public class LobbyServerInfoHandler extends AbstractServerInfoHandler {
         for(LobbyServerInfoHandler serverInfoHandler : lobbyServerInfoHandlerList) {
             // We check if the server we are seeking for is not the same we are currently on, and it has the needed name pattern
             // Doing it this way we can find another lobby and specify if the lobby has to be some exact minigames lobby
-            if(!serverInfoHandler.getServerName().equalsIgnoreCase(serverCurrentlyOn)) continue;
+            if(serverInfoHandler.getServerName().equalsIgnoreCase(serverCurrentlyOn)) continue;
             if(!serverInfoHandler.getServerName().contains(serverNamePattern)) continue;
             if(serverInfoHandler.getPlayersOnline() > 100 && !Rank.hasPermission(Rank.HELPER, playerUniqueId)) continue;
             return getProxyServer(serverInfoHandler.getServerName());

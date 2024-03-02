@@ -1,0 +1,12 @@
+name: SkywarsLobby
+version: '${project.version}'
+main: me.fodded.skywarslobby.Main
+commands:
+  gm:
+  rank:
+  stats:
+  setlobby:
+  configreload:
+  nick:
+  revealnick:
+  disguisehistory:

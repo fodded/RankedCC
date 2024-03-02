@@ -17,9 +17,9 @@ public class SendPlayerToLobbyListener implements IBungeeRedisListener {
         LobbyServerInfoHandler lobbyServerInfoHandler = new LobbyServerInfoHandler();
         lobbyServerInfoHandler.clearAndUpdateServerInformation();
 
-        ServerInfo server = lobbyServerInfoHandler.getSuitableServer(serverNamePatter);
-
         ProxiedPlayer player = ProxyServer.getInstance().getPlayer(playerUniqueId);
+        ServerInfo server = lobbyServerInfoHandler.getSuitableServer(playerUniqueId, player.getServer().getInfo().getName(), serverNamePatter);
+
         player.connect(server);
     }
 }

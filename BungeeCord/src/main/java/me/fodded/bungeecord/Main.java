@@ -32,7 +32,7 @@ public class Main extends Plugin {
         ProxyCore.getInstance().initializeDatabase(config);
 
         registerRedisListeners();
-        registerRedisListeners();
+        registerBungeeCommands();
 
         // Registering custom bungee listeners
         ProxyServer.getInstance().getPluginManager().registerListener(this, new PlayerConnectListener());

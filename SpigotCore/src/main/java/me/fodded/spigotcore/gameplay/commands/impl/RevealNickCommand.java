@@ -10,17 +10,15 @@ import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.core.model.Database;
 import me.fodded.spigotcore.gameplay.commands.CommandInfo;
 import me.fodded.spigotcore.gameplay.commands.PluginCommand;
-import me.fodded.spigotcore.gameplay.disguise.DisguiseManager;
 import me.fodded.spigotcore.utils.StringUtils;
 import org.bson.Document;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
-@CommandInfo(rank = Rank.YOUTUBE, name = "revealnick", usage = "&c/revealnick [disguised nick] [disguised rank]", description = "Shows player's original name")
+@CommandInfo(rank = Rank.MODERATOR, name = "revealnick", usage = "&c/revealnick [disguised nick] [disguised rank]", description = "Shows player's original name")
 public class RevealNickCommand extends PluginCommand {
 
     @Override
@@ -59,18 +57,6 @@ public class RevealNickCommand extends PluginCommand {
         sender.sendMessage(StringUtils.format(
                 "&fThe last player who used disguise " + disguisedName + " was &6" + generalStats.getRank().getPrefix() + generalStats.getLastName()
         ));
-    }
-
-    private void resetDisguisedNick(Player player) {
-        DisguiseManager disguiseManager = DisguiseManager.getInstance();
-        disguiseManager.setDisguise(player, disguiseManager.getNameFromUUID(player.getUniqueId()));
-
-        GeneralStatsDataManager.getInstance().applyChangeToRedis(player.getUniqueId(), updatedGeneralStats -> updatedGeneralStats.setDisguisedName(""));
-    }
-
-    public boolean doesContainIllegalCharacters(String input) {
-        String legalCharactersRegex = "^[a-zA-Z0-9_]*$";
-        return !input.matches(legalCharactersRegex);
     }
 }
 

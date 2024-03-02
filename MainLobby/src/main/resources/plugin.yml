@@ -1,0 +1,12 @@
+name: MainLobby
+version: '${project.version}'
+main: me.fodded.mainlobby.Main
+commands:
+  gm:
+  rank:
+  stats:
+  setlobby:
+  configreload:
+  nick:
+  revealnick:
+  disguisehistory:

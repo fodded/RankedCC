@@ -2,6 +2,7 @@ package me.fodded.spigotcore.gameplay.commands.impl;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Sorts;
 import me.fodded.core.Core;
 import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
@@ -19,6 +20,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.regex.Pattern;
+
 @CommandInfo(rank = Rank.YOUTUBE, name = "nick", usage = "&c/nick [player] [rank]", description = "Hides your original name")
 public class NickCommand extends PluginCommand {
 
@@ -29,7 +34,7 @@ public class NickCommand extends PluginCommand {
         if(args.length == 1) {
             if(args[0].equalsIgnoreCase("reset")) {
                 resetDisguisedNick(player);
-                AbstractServerPlayer.sendLogToPlayers("&6[LOG] &fPlayer" + player.getName() + " &freset his disguise");
+                AbstractServerPlayer.sendLogToPlayers("&6[LOG] &fPlayer " + player.getName() + " &freset his disguise");
                 return;
             }
         }
@@ -68,6 +73,11 @@ public class NickCommand extends PluginCommand {
                 return;
             }
 
+            if(isDisguiseAlreadyUsed(disguisedNick)) {
+                StringUtils.sendMessage(player, "disguise.player-exists");
+                return;
+            }
+
             Bukkit.getScheduler().runTask(SpigotCore.getInstance().getPlugin(), () -> {
                 AbstractServerPlayer.sendLogToPlayers("&6[LOG] &fPlayer " + player.getName() + " &fchanged his nick to &6" + disguisedNick);
                 DisguiseManager.getInstance().setDisguise(player, disguisedNick);
@@ -78,15 +88,36 @@ public class NickCommand extends PluginCommand {
     }
 
     private void addDisguiseToHistory(Player player, String disguisedNick, Rank disguisedRank) {
+        CompletableFuture.runAsync(() -> {
+            MongoDatabase mongoDatabase = Core.getInstance().getDatabase().getMongoDatabase(Database.STATISTICS_DB);
+            MongoCollection<Document> collection = mongoDatabase.getCollection("DisguiseHistory");
+
+            Document document = new Document("uniqueId", player.getUniqueId().toString())
+                    .append("disguisedNick", disguisedNick)
+                    .append("disguisedRank", disguisedRank.name())
+                    .append("time", System.currentTimeMillis());
+
+            collection.insertOne(document);
+        });
+    }
+
+    private boolean isDisguiseAlreadyUsed(String disguisedName) {
         MongoDatabase mongoDatabase = Core.getInstance().getDatabase().getMongoDatabase(Database.STATISTICS_DB);
         MongoCollection<Document> collection = mongoDatabase.getCollection("DisguiseHistory");
 
-        Document document = new Document("uniqueId", player.getUniqueId().toString())
-                .append("disguisedNick", disguisedNick)
-                .append("disguisedRank", disguisedRank.name())
-                .append("time", System.currentTimeMillis());
+        Pattern pattern = Pattern.compile(Pattern.quote(disguisedName), Pattern.CASE_INSENSITIVE);
+        Document document = collection.find(
+                new Document("disguisedNick", pattern)
+        ).sort(Sorts.descending("time")).first();
 
-        collection.insertOne(document);
+        if(document == null) {
+            return false;
+        }
+
+        UUID uniqueId = UUID.fromString(document.getString("uniqueId"));
+        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getRemoteValue(uniqueId);
+
+        return generalStats.getDisguisedName().equalsIgnoreCase(disguisedName);
     }
 
     private void resetDisguisedNick(Player player) {

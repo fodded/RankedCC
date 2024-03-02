@@ -24,6 +24,7 @@ public class CommandManager {
         commandsList.add(new ConfigReloadCommand());
         commandsList.add(new NickCommand());
         commandsList.add(new RevealNickCommand());
+        commandsList.add(new DisguiseHistoryCommand());
     }
 
     public void addCommand(PluginCommand command) {

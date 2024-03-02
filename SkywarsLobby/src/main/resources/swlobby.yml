@@ -1,0 +1,7 @@
+lobby-location:
+  x: 0.5
+  y: 100.0
+  z: 0.5
+  world: world
+  yaw: -180
+  pitch: 0
