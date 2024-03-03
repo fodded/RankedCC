@@ -29,7 +29,7 @@ public class SetLobbyCommand extends PluginCommand {
             GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
             generalStatsDataManager.applyChangeToRedis(
                     uniqueId,
-                    generalStats -> generalStats.addFriendToList(UUID.randomUUID())
+                    generalStats -> generalStats.addFriendToFriendList(UUID.randomUUID())
             );
             return;
         }

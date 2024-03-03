@@ -1,5 +1,7 @@
 package me.fodded.proxycore.configs;
 
+import jodd.util.ResourcesUtil;
+import me.fodded.proxycore.ProxyCore;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -7,6 +9,7 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 public class ConfigLoader {
 
@@ -31,8 +34,21 @@ public class ConfigLoader {
         }
     }
 
-    public Configuration getConfig() {
-        File file = new File(ProxyServer.getInstance().getPluginsFolder() + "/config.yml");
+    public Configuration getConfig(String configName) {
+        File pluginFolder = ProxyCore.getInstance().getPlugin().getDataFolder();
+        if (!pluginFolder.exists()) {
+            pluginFolder.mkdir();
+        }
+
+        File file = new File(pluginFolder, configName);
+        if (!file.exists()) {
+            try {
+                Files.copy(ResourcesUtil.getResourceAsStream(configName), file.toPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         try {
             return ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
         } catch (IOException e) {

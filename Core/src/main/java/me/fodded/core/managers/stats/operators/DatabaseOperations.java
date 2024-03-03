@@ -6,6 +6,7 @@ import me.fodded.core.Core;
 import me.fodded.core.model.Database;
 import org.bson.Document;
 
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class DatabaseOperations {
@@ -27,6 +28,21 @@ public class DatabaseOperations {
 
         return collection.countDocuments(Filters.eq(field, value)) > 0;
     }
+
+    public UUID getUniqueIdFromName(String name) {
+        MongoCollection<Document> collection = Core.getInstance().getDatabase()
+                .getMongoDatabase(Database.STATISTICS_DB)
+                .getCollection("GeneralStats");
+
+        Pattern pattern = Pattern.compile(Pattern.quote(name), Pattern.CASE_INSENSITIVE);
+        Document foundDocument = collection.find(new Document("lastName", pattern)).first();
+        if(foundDocument == null) {
+            return null;
+        }
+
+        return UUID.fromString(foundDocument.getString("uniqueId"));
+    }
+
 
     /*
     public void updateStatistic(UUID uniqueId, String collectionName, String statistic, Object value) {

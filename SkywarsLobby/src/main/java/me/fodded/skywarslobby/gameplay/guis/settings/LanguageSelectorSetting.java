@@ -90,6 +90,9 @@ public class LanguageSelectorSetting extends AbstractGuiSetting {
         GeneralStatsDataManager.getInstance().applyChange(
                 getUniqueID(), generalStats -> generalStats.setChosenLanguage(newLanguage)
         );
+
+        SkywarsLobbyPlayer.getLobbyPlayer(player.getUniqueId()).tellBungeeUpdateStatisticsCache();
+
         player.playSound(player.getLocation(), Sound.CLICK, 1.0f, 1.0f);
 
         // We run the open menu later because otherwise we get visual bug like nothing's been changed

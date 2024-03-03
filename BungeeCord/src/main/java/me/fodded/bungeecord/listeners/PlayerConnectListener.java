@@ -3,9 +3,13 @@ package me.fodded.bungeecord.listeners;
 import me.fodded.bungeecord.serverhandlers.BungeeServerHandler;
 import me.fodded.bungeecord.serverhandlers.servers.LobbyServerInfoHandler;
 import me.fodded.bungeecord.utils.StringUtils;
+import me.fodded.core.managers.stats.impl.profile.GeneralStats;
+import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
+import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -44,6 +48,23 @@ public class PlayerConnectListener implements Listener {
                 }
             }
         }, 500, TimeUnit.MILLISECONDS);*/
+    }
+
+    @EventHandler
+    public void onQuit(PlayerDisconnectEvent event) {
+        ProxiedPlayer player = event.getPlayer();
+        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(player.getUniqueId());
+
+        for(ProxiedPlayer eachPlayer : ProxyServer.getInstance().getPlayers()) {
+            if(!generalStats.getFriendList().contains(eachPlayer.getUniqueId())) {
+                continue;
+            }
+
+            String prefix = StringUtils.getPlayerPrefix(player);
+            eachPlayer.sendMessage(StringUtils.format(
+                    StringUtils.getMessage(eachPlayer, "friends.player-quit-server").replace("%player%", prefix))
+            );
+        }
     }
 
     private List<String> markedWords = new ArrayList<>(Arrays.asList("closed", "full", "shutdown", "restart", "went down"));

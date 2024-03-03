@@ -1,0 +1,3 @@
+mongodb-connection: connection-url
+redis-port: 6379
+redis-ip: localhost

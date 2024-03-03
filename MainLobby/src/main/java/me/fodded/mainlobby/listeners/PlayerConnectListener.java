@@ -27,6 +27,7 @@ public class PlayerConnectListener implements Listener {
         CompletableFuture<Void> loadStatistics = CompletableFuture.runAsync(() -> lobbyPlayer.loadDataAsync(player));
         loadStatistics.thenRun(() -> {
             Bukkit.getScheduler().runTask(SpigotCore.getInstance().getPlugin(), lobbyPlayer::handleJoin);
+            lobbyPlayer.tellBungeePlayerJoined();
         });
     }
 

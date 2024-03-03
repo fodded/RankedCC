@@ -64,6 +64,12 @@ menus-text:
     description:
       - "%friends_requests% &fcan send you friend requests now."
       - "&fRight Click to turn on/off this setting."
+  messages:
+    name: "&fReceive private &6&lMessages"
+    replace_text: "&6Anyone%&cFriends"
+    description:
+      - "%private_messages% &fcan send you private messages now."
+      - "&fRight Click to turn on/off this setting."
   chat:
     name: "&fChat is %chat_enabled%"
     replace_text: "&6&lEnabled%&c&lDisabled"

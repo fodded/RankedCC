@@ -9,11 +9,11 @@ import java.util.UUID;
 @Getter
 public enum Rank {
 
-    ADMIN("&6&lADMIN &6", 8),
-    MODERATOR("&2&lMODERATOR &2", 7),
-    HELPER("&e&lHELPER &e", 6),
-    YOUTUBE("&c&lYOUTUBE &c", 5),
-    MVPPLUS("&b&lMVPPLUS ", 4),
+    ADMIN("&c&l[ADMIN] &c", 8),
+    MODERATOR("&2&l[MODERATOR] &2", 7),
+    HELPER("&e&l[HELPER] &e", 6),
+    YOUTUBE("&c&l[YOUTUBE] &c", 5),
+    MVPPLUS("&b&l[MVPPLUS] ", 4),
     MVP("&b[MVP] ", 3),
     VIPPLUS("&a[VIP&6+&a] ", 2),
     VIP("&a[VIP] ", 1),

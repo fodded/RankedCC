@@ -65,6 +65,12 @@ menus-text:
     description:
       - "%friends_requests% &fможет отправить вам запрос в друзья теперь."
       - "&fПравый клик, чтобы включить/отключить эту функцию"
+  messages:
+    name: "&fЛичные &6&lСообщения"
+    replace_text: "&6Кто угодно%&cДрузья"
+    description:
+      - "%private_messages% &fмогут отправлять вам личные сообщения."
+      - "&fПравый клик, чтобы включить/отключить эту функцию"
   chat:
     name: "&fЧат %chat_enabled%"
     replace_text: "&6&lВключен%&c&lВыключен"

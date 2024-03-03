@@ -1,0 +1,28 @@
+friends:
+  no-player-present: "&cThat player is not present on the network."
+  friend-limit: "&cYou've reached limit of friends."
+  frequent-friend-requests: "&cYou send friends requests too often."
+  has-player-friended: "&cThat player is already your friend."
+  player-accepted-friend-req: "&aYou are now friends with %target_sent_request%"
+  player-declined-friend-req: "&aYou declined friend request from %player_sent_request%"
+  player-removed-friend: "&aYou are no longer friends with %target_sent_request%"
+  ignore-add: "&aFrom now you're ignoring %player_sent_request%"
+  ignore-remove: "&aYou are no longer ignoring %player_sent_request%"
+  cant-send-friend-request: "&cYou can not send friend request to this player"
+  cant-send-message: "&cYou can not send messages to this player"
+  not-friends: "&cYou are not friends with that players"
+  removed-all-friends: "&aYou've successfully cleared your friend list"
+  no-such-player: "&cCouldn't find a player with that nick"
+  player-joined-server: "%player% &fjoined the server"
+  player-quit-server: "%player% &fleft the server"
+  sent-friend-request: "&aYou successfully sent friend request to %target_sent_request%"
+  request-message:
+    sent: "&fYou sent friend request to %target_sent_request%"
+    received: "&fYou received friend request from %player_sent_request%"
+    received-button: "&fPick one action "
+    accept:
+      prefix: "&a&lACCEPT"
+      message: "&fAccept friend request from player %player_sent_request%"
+    decline:
+      prefix: "&c&lDECLINE"
+      message: "&cDecline friend request from player %player_sent_request%"

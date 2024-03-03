@@ -11,6 +11,7 @@ public class SettingsGui extends AbstractGui {
         super();
         addSetting(0, new FriendRequestSetting(player.getUniqueId(), Rank.DEFAULT));
         addSetting(1, new ChatEnabledSetting(player.getUniqueId(), Rank.DEFAULT));
+        addSetting(2, new PrivateMessagesSetting(player.getUniqueId(), Rank.DEFAULT));
 
         addSetting(3, new LoggingEnabledSetting(player.getUniqueId(), Rank.MODERATOR));
         addSetting(4, new VanishEnabledSetting(player.getUniqueId(), Rank.YOUTUBE));

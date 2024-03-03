@@ -1,0 +1,28 @@
+friends:
+  no-player-present: "&cДанный игрок не присутствует на сервере."
+  friend-limit: "&cВы достигли лимита друзей."
+  frequent-friend-requests: "&cВы отправляете запрос в друзья слишком чисто."
+  has-player-friended: "&cЭтот игрок уже находится у вас в друзьях."
+  player-accepted-friend-req: "&aТеперь вы друзья с %target_sent_request%"
+  player-declined-friend-req: "&aВы отклонили запрос дружбы от %player_sent_request%"
+  player-removed-friend: "&aВы больше не друзья с %target_sent_request%"
+  ignore-add: "&aТеперь вы игнорируете игрока %player_sent_request%"
+  ignore-remove: "&aВы больше не игнорируете игрока %player_sent_request%"
+  cant-send-friend-request: "&cВы не можете отправить запрос в друзья этому игроку"
+  cant-send-message: "&cВы не можете отправлять сообщения этому игроку"
+  not-friends: "&cВы не друзья с этим игроком"
+  removed-all-friends: "&aВы успешно отчистили список друзей"
+  no-such-player: "&cНе удалось найти игрока с таким ником"
+  player-joined-server: "%player% &fзашел на сервер"
+  player-quit-server: "%player% &fвышел с сервера"
+  sent-friend-request: "&aВы успешно отправили запрос дружбы %target_sent_request%"
+  request-message:
+    sent: "&fВы отправили запрос дружбы игроку %target_sent_request%"
+    received: "&fВы получили запрос в друзья от %player_sent_request%"
+    received-button: "&fВыберите действие "
+    accept:
+      prefix: "&a&lПРИНЯТЬ"
+      message: "&fПринять запрос дружбы от игрока %player_sent_request%"
+    decline:
+      prefix: "&c&lОТКЛОНИТЬ"
+      message: "&fОтклонить запрос дружбы от игрока %player_sent_request%"

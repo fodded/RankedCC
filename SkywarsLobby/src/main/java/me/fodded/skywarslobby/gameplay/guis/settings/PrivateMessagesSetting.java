@@ -15,12 +15,13 @@ import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class VanishEnabledSetting extends AbstractGuiSetting {
+public class PrivateMessagesSetting extends AbstractGuiSetting {
 
-    public VanishEnabledSetting(UUID uniqueId, Rank requiredRank) {
+    public PrivateMessagesSetting(UUID uniqueId, Rank requiredRank) {
         super(uniqueId, requiredRank);
         if(!Rank.hasPermission(getRequiredRank(), getUniqueID())) {
             return;
@@ -34,40 +35,44 @@ public class VanishEnabledSetting extends AbstractGuiSetting {
         Configuration config = LanguageManager.getInstance().getLanguageConfig(getUniqueID());
         GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueID());
 
-        boolean isVanishEnabled = generalStats.isVanished();
-        String name = getPlaceholder(config.getString("menus-text.vanish.name"), isVanishEnabled);
-        List<String> lore = config.getStringList("menus-text.vanish.description");
+        boolean areMessagesEnabled = generalStats.isPrivateMessagesEnabled();
+        String name = config.getString("menus-text.messages.name");
+        List<String> lore = getPlaceholder(config.getStringList("menus-text.messages.description"), areMessagesEnabled);
 
         setItemStack(ItemUtils.getItemStack(
-                isVanishEnabled ? Material.PAPER : Material.EMPTY_MAP,
+                areMessagesEnabled ? Material.PAPER : Material.EMPTY_MAP,
                 name,
                 lore,
-                isVanishEnabled
+                areMessagesEnabled
         ));
     }
 
-    private String getPlaceholder(String text, boolean isVanishEnabled) {
+    private List<String> getPlaceholder(List<String> lore, boolean areMessagesEnabled) {
+        List<String> listToReturn = new LinkedList<>();
+
         Configuration config = LanguageManager.getInstance().getLanguageConfig(getUniqueID());
-        String replaceText = config.getString("menus-text.vanish.replace_text");
-        return text.replace("%vanish_enabled%", isVanishEnabled ? replaceText.split("%")[0] : replaceText.split("%")[1]);
+        String replaceText = config.getString("menus-text.messages.replace_text");
+
+        for(String text : lore) {
+            listToReturn.add(
+                    text.replace("%private_messages%", areMessagesEnabled ? replaceText.split("%")[0] : replaceText.split("%")[1])
+            );
+        }
+        return listToReturn;
     }
 
     @Override
     public void onClick(InventoryClickEvent event, Player player) {
         GeneralStatsDataManager.getInstance().applyChangeToRedis(
-                getUniqueID(), generalStats -> generalStats.setVanished(!generalStats.isVanished())
+                getUniqueID(), generalStats -> generalStats.setPrivateMessagesEnabled(!generalStats.isPrivateMessagesEnabled())
         );
+
         SkywarsLobbyPlayer.getLobbyPlayer(player.getUniqueId()).tellBungeeUpdateStatisticsCache();
 
         player.playSound(player.getLocation(), Sound.CLICK, 1.0f, 1.0f);
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {
-            if(!player.isOnline()) {
+            if(player == null || !player.isOnline()) {
                 return;
-            }
-
-            for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
-                SkywarsLobbyPlayer lobbyPlayer = SkywarsLobbyPlayer.getLobbyPlayer(eachPlayer.getUniqueId());
-                lobbyPlayer.updateVisibility();
             }
 
             new SettingsGui(player);

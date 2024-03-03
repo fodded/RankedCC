@@ -4,6 +4,7 @@ import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.skywarslobby.Main;
+import me.fodded.skywarslobby.managers.SkywarsLobbyPlayer;
 import me.fodded.spigotcore.gameplay.gui.AbstractGuiSetting;
 import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.ItemUtils;
@@ -56,6 +57,7 @@ public class LoggingEnabledSetting extends AbstractGuiSetting {
         GeneralStatsDataManager.getInstance().applyChangeToRedis(
                 getUniqueID(), generalStats -> generalStats.setLogging(!generalStats.isLogging())
         );
+        SkywarsLobbyPlayer.getLobbyPlayer(player.getUniqueId()).tellBungeeUpdateStatisticsCache();
 
         player.playSound(player.getLocation(), Sound.CLICK, 1.0f, 1.0f);
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {

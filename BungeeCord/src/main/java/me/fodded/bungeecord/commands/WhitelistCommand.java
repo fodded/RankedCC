@@ -9,7 +9,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 public class WhitelistCommand extends Command {
     public WhitelistCommand() {
-        super("turn");
+        super("bungeewhitelist");
     }
 
     public void execute(CommandSender sender, String[] args) {

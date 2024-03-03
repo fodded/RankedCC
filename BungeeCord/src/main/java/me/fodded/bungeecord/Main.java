@@ -4,9 +4,14 @@ import lombok.Getter;
 import me.fodded.bungeecord.commands.ListCommand;
 import me.fodded.bungeecord.commands.LobbyCommand;
 import me.fodded.bungeecord.commands.WhitelistCommand;
+import me.fodded.bungeecord.commands.friends.FriendCommand;
+import me.fodded.bungeecord.commands.friends.FriendListCommand;
+import me.fodded.bungeecord.commands.friends.FriendMessageCommand;
 import me.fodded.bungeecord.listeners.PlayerConnectListener;
+import me.fodded.bungeecord.redislisteners.PlayerConnectedToProxyListener;
 import me.fodded.bungeecord.redislisteners.SendLogsToPlayerListener;
 import me.fodded.bungeecord.redislisteners.SendPlayerToLobbyListener;
+import me.fodded.bungeecord.redislisteners.UpdateStatisticsCacheListener;
 import me.fodded.core.Core;
 import me.fodded.proxycore.ProxyCore;
 import me.fodded.proxycore.configs.ConfigLoader;
@@ -27,7 +32,7 @@ public class Main extends Plugin {
         ProxyCore.getInstance().initializeListeners();
         ConfigLoader.getInstance().createConfig();
 
-        Configuration config = ConfigLoader.getInstance().getConfig();
+        Configuration config = ConfigLoader.getInstance().getConfig("core-config.yml");
         ProxyCore.getInstance().initializeRedis(config);
         ProxyCore.getInstance().initializeDatabase(config);
 
@@ -42,6 +47,11 @@ public class Main extends Plugin {
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new ListCommand());
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new LobbyCommand());
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new WhitelistCommand());
+
+        // Friends
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new FriendCommand());
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new FriendListCommand());
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new FriendMessageCommand());
     }
 
     private void registerRedisListeners() {
@@ -53,6 +63,16 @@ public class Main extends Plugin {
         RTopic sendLogsToPlayer = Core.getInstance().getRedis().getRedissonClient().getTopic("sendLogsToPlayer");
         sendLogsToPlayer.addListener(String.class, (channel, msg) -> {
             new SendLogsToPlayerListener().onMessage(channel, msg);
+        });
+
+        RTopic playerConnectedToProxy = Core.getInstance().getRedis().getRedissonClient().getTopic("playerConnectedToProxy");
+        playerConnectedToProxy.addListener(String.class, (channel, msg) -> {
+            new PlayerConnectedToProxyListener().onMessage(channel, msg);
+        });
+
+        RTopic updateStatisticsCache = Core.getInstance().getRedis().getRedissonClient().getTopic("updateStatisticsCache");
+        updateStatisticsCache.addListener(String.class, (channel, msg) -> {
+            new UpdateStatisticsCacheListener().onMessage(channel, msg);
         });
     }
 

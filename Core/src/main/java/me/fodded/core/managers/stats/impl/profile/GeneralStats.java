@@ -14,11 +14,12 @@ public class GeneralStats {
     private Rank rank, disguisedRank;
 
     private String prefix, disguisedName, lastName, disguisedSkinTexture, disguisedSkinSignature, chosenLanguage, lastLobby, ipAddress;
-    private boolean vanished, logging, playersVisibility, chatEnabled, friendRequestsEnabled;
+    private boolean vanished, logging, playersVisibility, chatEnabled, friendRequestsEnabled, privateMessagesEnabled;
 
     private long lastLogin, firstLogin, timePlayed;
 
     private List<UUID> friendList = new LinkedList<>();
+    private List<UUID> ignoreList = new LinkedList<>();
 
     public GeneralStats(UUID uniqueId) {
         this.uniqueId = uniqueId;
@@ -33,15 +34,29 @@ public class GeneralStats {
 
         this.chatEnabled = true;
         this.playersVisibility = true;
+        this.friendRequestsEnabled = true;
+        this.privateMessagesEnabled = true;
 
         this.firstLogin = System.currentTimeMillis();
     }
 
-    public void addFriendToList(UUID uniqueId) {
+    public void addFriendToFriendList(UUID uniqueId) {
         friendList.add(uniqueId);
     }
 
-    public void removeFriendFromList(UUID uniqueId) {
+    public void removeFriendFromFriendList(UUID uniqueId) {
         friendList.remove(uniqueId);
+    }
+
+    public void addFriendToIgnoreList(UUID uniqueId) {
+        friendList.add(uniqueId);
+    }
+
+    public void removeFriendFromIgnoreList(UUID uniqueId) {
+        friendList.remove(uniqueId);
+    }
+
+    public void clearFriendList() {
+        friendList.clear();
     }
 }
