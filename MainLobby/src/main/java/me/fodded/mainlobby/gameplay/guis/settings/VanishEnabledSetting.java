@@ -57,6 +57,7 @@ public class VanishEnabledSetting extends AbstractGuiSetting {
         GeneralStatsDataManager.getInstance().applyChangeToRedis(
                 getUniqueID(), generalStats -> generalStats.setVanished(!generalStats.isVanished())
         );
+        MainLobbyPlayer.getLobbyPlayer(player.getUniqueId()).tellBungeeUpdateStatisticsCache();
 
         player.playSound(player.getLocation(), Sound.CLICK, 1.0f, 1.0f);
         Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> {

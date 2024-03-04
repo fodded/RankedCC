@@ -6,6 +6,7 @@ import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.util.List;
 import java.util.UUID;
 
 public class StringUtils {
@@ -20,6 +21,12 @@ public class StringUtils {
     public static void sendMessage(ProxiedPlayer player, String configMessageKey) {
         BaseComponent[] message = format(LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString(configMessageKey));
         player.sendMessage(message);
+    }
+
+    public static void sendMessage(ProxiedPlayer player, List<String> messageList) {
+        for(String message : messageList) {
+            player.sendMessage(StringUtils.format(message));
+        }
     }
 
     public static String getMessage(ProxiedPlayer player, String configMessageKey) {

@@ -48,7 +48,7 @@ public class FriendReceiveRequest extends FriendManager implements IFriendReques
         playerReceivedRequest.sendMessage(StringUtils.format("&f--------------------------------------"));
 
         playerSentRequest.sendMessage(StringUtils.getReplacedPlaceholders(
-                StringUtils.getMessage(playerReceivedRequest, "friends.sent-friend-request"),
+                StringUtils.getMessage(playerSentRequest, "friends.sent-friend-request"),
                 StringUtils.getPlayerPrefix(playerReceivedRequest)
         ));
     }

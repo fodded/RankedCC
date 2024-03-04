@@ -17,8 +17,8 @@ public class FriendAcceptRequest extends FriendManager implements IFriendRequest
             return;
         }
 
-        addFriend(playerSentRequest, playerReceivedRequest);
-        addFriend(playerReceivedRequest, playerSentRequest);
+        addToFriends(playerSentRequest, playerReceivedRequest);
+        addToFriends(playerReceivedRequest, playerSentRequest);
 
         String playerReceivedRequestPrefix = StringUtils.getPlayerPrefix(playerReceivedRequest);
         String acceptedRequest = StringUtils.getReplacedPlaceholders(

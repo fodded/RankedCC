@@ -82,8 +82,6 @@ public abstract class GlobalDataManager<K, V> {
         } else {
             applyChangeToDatabase(key, kConsumer);
         }
-
-        loadingCache.refresh(key);
     }
 
     public void removeFromCache(K key) {

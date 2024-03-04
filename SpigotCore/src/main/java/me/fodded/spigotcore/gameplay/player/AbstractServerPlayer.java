@@ -48,17 +48,17 @@ public abstract class AbstractServerPlayer implements IServerPlayer {
     }
 
     public void tellBungeePlayerJoined() {
-        //CompletableFuture.runAsync(() -> {
+        CompletableFuture.runAsync(() -> {
             RTopic topic = Core.getInstance().getRedis().getRedissonClient().getTopic("playerConnectedToProxy");
             topic.publish(getUniqueId().toString());
-        //});
+        });
     }
 
     public void tellBungeeUpdateStatisticsCache() {
-        //CompletableFuture.runAsync(() -> {
+        CompletableFuture.runAsync(() -> {
             RTopic topic = Core.getInstance().getRedis().getRedissonClient().getTopic("updateStatisticsCache");
             topic.publish(getUniqueId().toString());
-        //});
+        });
     }
 
     public boolean isFlooding() {
