@@ -1,6 +1,5 @@
 package me.fodded.bungeecord.managers.friends;
 
-import me.fodded.bungeecord.managers.FriendManager;
 import me.fodded.bungeecord.utils.StringUtils;
 import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;

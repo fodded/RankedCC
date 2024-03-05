@@ -4,9 +4,12 @@ import lombok.Getter;
 import me.fodded.bungeecord.commands.ListCommand;
 import me.fodded.bungeecord.commands.LobbyCommand;
 import me.fodded.bungeecord.commands.WhitelistCommand;
+import me.fodded.bungeecord.commands.bans.BanCommand;
 import me.fodded.bungeecord.commands.friends.FriendCommand;
 import me.fodded.bungeecord.commands.friends.FriendListCommand;
-import me.fodded.bungeecord.commands.friends.FriendMessageCommand;
+import me.fodded.bungeecord.commands.friends.messages.MessageCommand;
+import me.fodded.bungeecord.commands.friends.messages.ReplyCommand;
+import me.fodded.bungeecord.commands.ignore.IgnoreCommand;
 import me.fodded.bungeecord.listeners.PlayerConnectListener;
 import me.fodded.bungeecord.redislisteners.PlayerConnectedToProxyListener;
 import me.fodded.bungeecord.redislisteners.SendLogsToPlayerListener;
@@ -51,7 +54,14 @@ public class Main extends Plugin {
         // Friends
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new FriendCommand());
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new FriendListCommand());
-        ProxyServer.getInstance().getPluginManager().registerCommand(this, new FriendMessageCommand());
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new MessageCommand());
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new ReplyCommand());
+
+        // Ignore
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new IgnoreCommand());
+
+        // Punishments
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanCommand());
     }
 
     private void registerRedisListeners() {

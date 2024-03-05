@@ -1,12 +1,9 @@
 package me.fodded.bungeecord.managers.ignore;
 
-import me.fodded.bungeecord.managers.IgnoreManager;
-import me.fodded.bungeecord.managers.friends.FriendDeclineRequest;
 import me.fodded.bungeecord.utils.StringUtils;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import me.fodded.core.managers.stats.operators.DatabaseOperations;
-import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.UUID;

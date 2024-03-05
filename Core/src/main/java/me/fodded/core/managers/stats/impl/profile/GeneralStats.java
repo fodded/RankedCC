@@ -48,12 +48,12 @@ public class GeneralStats {
         friendList.remove(uniqueId);
     }
 
-    public void addFriendToIgnoreList(UUID uniqueId) {
-        friendList.add(uniqueId);
+    public void addPlayerToIgnoreList(UUID uniqueId) {
+        ignoreList.add(uniqueId);
     }
 
-    public void removeFriendFromIgnoreList(UUID uniqueId) {
-        friendList.remove(uniqueId);
+    public void removePlayerFromIgnoreList(UUID uniqueId) {
+        ignoreList.remove(uniqueId);
     }
 
     public void clearFriendList() {

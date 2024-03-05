@@ -1,17 +1,18 @@
 ignore:
   not-ignored: "&cThis player is not on your ignore list"
+  already-ignored: "&cThis player is already on your ignore list"
   ignore-removed: "&aThe player has successfully been removed from your ignore list"
   ignore-added: "&aThe played has successfully been added to your ignore list"
   ignore-adding-too-often: "&cYou can not run command that often"
   ignore-limit: "&cYou've reached limit of ignored players"
   ignore-command-help:
     - "&f-----------------------------------"
-    - "&6&lFriends Commands"
+    - "&6&lIgnore Commands"
     - "&6/ignore list &f-> display all ignored players"
     - "&6/ignore add [player] &f-> ignore player"
     - "&6/ignore remove [player] &f-> unignore player"
     - "&f-----------------------------------"
-  friend-list:
+  ignore-list:
     - "&f-----------------------------------"
     - "&6Ignore List (%current_page%/%pages%)"
     - "%ignored%"

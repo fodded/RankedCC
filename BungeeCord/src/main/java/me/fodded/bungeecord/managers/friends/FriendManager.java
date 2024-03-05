@@ -1,4 +1,4 @@
-package me.fodded.bungeecord.managers;
+package me.fodded.bungeecord.managers.friends;
 
 import lombok.Data;
 import me.fodded.bungeecord.Main;
@@ -16,6 +16,7 @@ public class FriendManager {
     private static final Map<UUID, Long> floodMap = new HashMap<>();
     private static final Map<UUID, Integer> sentRequestsCounterMap = new HashMap<>();
     private static final Map<UUID, List<UUID>> sentRequestsMap = new HashMap<>();
+    private static final Map<UUID, UUID> lastReceivedMessageFromMap = new HashMap<>();
 
     public FriendManager() {
         instance = this;
@@ -80,6 +81,26 @@ public class FriendManager {
             sentRequestsCounterMap.remove(player.getUniqueId());
         }
 
+        return false;
+    }
+
+    public UUID getLastReceivedMessageFrom(UUID playerUniqueId) {
+        return lastReceivedMessageFromMap.getOrDefault(playerUniqueId, null);
+    }
+
+    public void setLastReceivedMessageFrom(UUID playerReceivedMessageUniqueId, UUID playerSentMessageUniqueId) {
+        lastReceivedMessageFromMap.put(playerReceivedMessageUniqueId, playerSentMessageUniqueId);
+    }
+
+    public void removeLastReceivedMessageFrom(UUID playerUniqueId) {
+        lastReceivedMessageFromMap.remove(playerUniqueId);
+    }
+
+    public boolean isThePlayerLastWhoSentMessage(UUID playerUniqueId, UUID playerSentMessageUniqueId) {
+        UUID lastReceivedMessageUniqueId = getLastReceivedMessageFrom(playerUniqueId);
+        if(lastReceivedMessageUniqueId != null) {
+            return lastReceivedMessageUniqueId.equals(playerSentMessageUniqueId);
+        }
         return false;
     }
 

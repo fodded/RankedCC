@@ -1,5 +1,6 @@
 package me.fodded.bungeecord.listeners;
 
+import me.fodded.bungeecord.managers.friends.FriendManager;
 import me.fodded.bungeecord.serverhandlers.BungeeServerHandler;
 import me.fodded.bungeecord.serverhandlers.servers.LobbyServerInfoHandler;
 import me.fodded.bungeecord.utils.StringUtils;
@@ -65,6 +66,8 @@ public class PlayerConnectListener implements Listener {
                     StringUtils.getMessage(eachPlayer, "friends.player-quit-server").replace("%player%", prefix))
             );
         }
+
+        FriendManager.getInstance().removeLastReceivedMessageFrom(player.getUniqueId());
     }
 
     private List<String> markedWords = new ArrayList<>(Arrays.asList("closed", "full", "shutdown", "restart", "went down"));

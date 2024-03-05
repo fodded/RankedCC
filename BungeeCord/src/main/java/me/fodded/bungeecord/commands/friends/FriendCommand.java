@@ -1,9 +1,9 @@
 package me.fodded.bungeecord.commands.friends;
 
-import me.fodded.bungeecord.managers.FriendManager;
 import me.fodded.bungeecord.managers.LanguageManager;
 import me.fodded.bungeecord.managers.friends.FriendAcceptRequest;
 import me.fodded.bungeecord.managers.friends.FriendDeclineRequest;
+import me.fodded.bungeecord.managers.friends.FriendManager;
 import me.fodded.bungeecord.managers.friends.FriendSendRequest;
 import me.fodded.bungeecord.utils.StringUtils;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;

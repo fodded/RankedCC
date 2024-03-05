@@ -69,16 +69,16 @@ public class FriendListCommand extends Command {
         return friendMessageList;
     }
 
-    private int getPage(String[] args, int friendsListSize) {
+    private int getPage(String[] args, int arraySize) {
         if (args.length != 1) return 0;
 
         // We do not want to get negative pages from a player input
         // And we do not want to get a page higher than max pages
         int page = Math.max(0, Integer.parseInt(args[0]) - 1);
-        return Math.min(getMaxPages(friendsListSize), page);
+        return Math.min(getMaxPages(arraySize), page);
     }
 
-    private int getMaxPages(int friendsListSize) {
-        return Math.round((float) friendsListSize / FRIENDS_PER_PAGE);
+    private int getMaxPages(int arrSize) {
+        return Math.round((float) arrSize / FRIENDS_PER_PAGE);
     }
 }

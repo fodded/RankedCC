@@ -1,9 +1,9 @@
-package me.fodded.bungeecord.managers;
+package me.fodded.bungeecord.managers.ignore;
 
+import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,11 +17,19 @@ public class IgnoreManager {
     }
 
     public void addToIgnoreList(ProxiedPlayer playerSentRequest, ProxiedPlayer playerToAddToList) {
-
+        GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
+        generalStatsDataManager.applyChange(
+                playerSentRequest.getUniqueId(),
+                generalStats -> generalStats.addPlayerToIgnoreList(playerToAddToList.getUniqueId())
+        );
     }
 
     public void removeFromIgnoreList(ProxiedPlayer playerSentRequest, UUID playerUUIDToRemoveFromList) {
-
+        GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
+        generalStatsDataManager.applyChange(
+                playerSentRequest.getUniqueId(),
+                generalStats -> generalStats.removePlayerFromIgnoreList(playerUUIDToRemoveFromList)
+        );
     }
 
     protected boolean isPlayerFlooding(ProxiedPlayer player) {

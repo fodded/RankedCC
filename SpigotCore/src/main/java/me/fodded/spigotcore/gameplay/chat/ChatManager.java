@@ -47,7 +47,7 @@ public class ChatManager implements Listener {
         String displayedName = player.getName();
         String message = getFormattedMessage(event);
 
-        broadcastMessage(prefix, displayedName, message);
+        broadcastMessage(player.getUniqueId(), prefix, displayedName, message);
         floodMap.put(player.getUniqueId(), System.currentTimeMillis() + chatDelay);
     }
 
@@ -82,13 +82,19 @@ public class ChatManager implements Listener {
         return message;
     }
 
-    private void broadcastMessage(String prefix, String displayedName, String message) {
+    private void broadcastMessage(UUID messageSenderUniqueId, String prefix, String displayedName, String message) {
         String formattedMessage = StringUtils.format(prefix + displayedName + "&f: ") + message;
         for (Player eachPlayer : Bukkit.getOnlinePlayers()) {
             GeneralStats eachPlayerGeneralStats = GeneralStatsDataManager.getInstance().getCachedValue(eachPlayer.getUniqueId());
-            if (eachPlayerGeneralStats.isChatEnabled()) {
-                eachPlayer.sendMessage(formattedMessage);
+            if (!eachPlayerGeneralStats.isChatEnabled()) {
+                continue;
             }
+
+            if(eachPlayerGeneralStats.getIgnoreList().contains(messageSenderUniqueId)) {
+                continue;
+            }
+
+            eachPlayer.sendMessage(formattedMessage);
         }
     }
 }

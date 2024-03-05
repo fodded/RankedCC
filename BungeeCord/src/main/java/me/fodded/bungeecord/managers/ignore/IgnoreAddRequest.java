@@ -1,10 +1,6 @@
 package me.fodded.bungeecord.managers.ignore;
 
-import me.fodded.bungeecord.managers.FriendManager;
-import me.fodded.bungeecord.managers.IgnoreManager;
-import me.fodded.bungeecord.managers.friends.FriendAcceptRequest;
 import me.fodded.bungeecord.utils.StringUtils;
-import me.fodded.core.managers.ranks.Rank;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
 import net.md_5.bungee.api.ProxyServer;
@@ -36,7 +32,15 @@ public class IgnoreAddRequest extends IgnoreManager implements IgnoreRequest {
             return;
         }
 
-        IgnoreManager.getInstance().addToIgnoreList(playerSentRequest, playerReceivedRequest);
+        if(playerSentRequestGeneralStats.getIgnoreList().contains(playerReceivedRequest.getUniqueId())) {
+            StringUtils.sendMessage(playerSentRequest, "ignore.already-ignored");
+            return;
+        }
+
+        IgnoreManager ignoreManager = IgnoreManager.getInstance();
+        ignoreManager.addToIgnoreList(playerSentRequest, playerReceivedRequest);
+
+        StringUtils.sendMessage(playerSentRequest, "ignore.ignore-added");
     }
 
     public static IgnoreAddRequest getInstance() {

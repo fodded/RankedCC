@@ -43,6 +43,29 @@ public class DatabaseOperations {
         return UUID.fromString(foundDocument.getString("uniqueId"));
     }
 
+    public long getPlayerBansAmount(UUID uniqueId) {
+        MongoCollection<Document> collection = Core.getInstance().getDatabase()
+                .getMongoDatabase(Database.STATISTICS_DB)
+                .getCollection("BansHistory");
+
+        return collection.countDocuments(Filters.eq("uniqueId", uniqueId.toString()));
+    }
+
+    public boolean isPlayerCurrentlyBanned(UUID uniqueId) {
+        MongoCollection<Document> collection = Core.getInstance().getDatabase()
+                .getMongoDatabase(Database.STATISTICS_DB)
+                .getCollection("BansHistory");
+
+        Document foundDocument = collection.find(Filters.eq("uniqueId", uniqueId)).first();
+        if(foundDocument == null) {
+            return false;
+        }
+
+        return foundDocument.getLong("time") + foundDocument.getLong("duration") > System.currentTimeMillis();
+    }
+
+
+
 
     /*
     public void updateStatistic(UUID uniqueId, String collectionName, String statistic, Object value) {

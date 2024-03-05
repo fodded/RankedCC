@@ -1,6 +1,5 @@
 package me.fodded.bungeecord.managers.friends;
 
-import me.fodded.bungeecord.managers.FriendManager;
 import me.fodded.bungeecord.utils.StringUtils;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
