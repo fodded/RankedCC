@@ -60,7 +60,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>/home/theparasol/Desktop/server/skywars-lobby-1/plugins/SkywarsLobby.jar</outputFile>
+                            <outputFile>/home/theparasol/Desktop/rankedcc/skywars-lobby-1/plugins/SkywarsLobby.jar</outputFile>
                             <relocations>
                                 <relocation>
                                     <pattern>io.netty</pattern>

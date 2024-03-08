@@ -5,6 +5,8 @@ import me.fodded.bungeecord.commands.ListCommand;
 import me.fodded.bungeecord.commands.LobbyCommand;
 import me.fodded.bungeecord.commands.WhitelistCommand;
 import me.fodded.bungeecord.commands.bans.BanCommand;
+import me.fodded.bungeecord.commands.bans.BanHistoryCommand;
+import me.fodded.bungeecord.commands.bans.UnbanCommand;
 import me.fodded.bungeecord.commands.friends.FriendCommand;
 import me.fodded.bungeecord.commands.friends.FriendListCommand;
 import me.fodded.bungeecord.commands.friends.messages.MessageCommand;
@@ -62,6 +64,8 @@ public class Main extends Plugin {
 
         // Punishments
         ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanCommand());
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new UnbanCommand());
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new BanHistoryCommand());
     }
 
     private void registerRedisListeners() {

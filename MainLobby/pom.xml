@@ -39,7 +39,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputFile>/home/theparasol/Desktop/server/main-lobby-1/plugins/MainLobby.jar</outputFile>
+                            <outputFile>/home/theparasol/Desktop/rankedcc/main-lobby-1/plugins/MainLobby.jar</outputFile>
                             <relocations>
                                 <relocation>
                                     <pattern>io.netty</pattern>

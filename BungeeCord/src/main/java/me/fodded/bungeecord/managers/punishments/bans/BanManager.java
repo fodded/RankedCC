@@ -1,6 +1,7 @@
 package me.fodded.bungeecord.managers.punishments.bans;
 
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
 import me.fodded.bungeecord.utils.StringUtils;
 import me.fodded.core.Core;
 import me.fodded.core.model.Database;
@@ -29,8 +30,15 @@ public class BanManager {
         collection.insertOne(document);
     }
 
-    public void removeBanFromDatabase() {
+    public void removeBanFromDatabase(UUID bannedPlayerUniqueId) {
+        MongoCollection<Document> collection = Core.getInstance().getDatabase()
+                .getMongoDatabase(Database.STATISTICS_DB)
+                .getCollection("BansHistory");
 
+        Document foundBan = collection.find(Filters.eq("uniqueId", bannedPlayerUniqueId.toString())).first();
+        if(foundBan != null) {
+            collection.deleteOne(foundBan);
+        }
     }
 
     public static String getBanMessage(long banDuration, String banId) {
@@ -40,7 +48,7 @@ public class BanManager {
         banMessage += "\n";
         banMessage += "\n&fWe recently received a report for bad behaviour by your account. Our";
         banMessage += "\n&fmoderators have now reviewed your case and identified that it goes";
-        banMessage += "\n&fagains our fair gameplay standards";
+        banMessage += "\n&fagainst our fair gameplay standards";
         banMessage += "\n";
         banMessage += "\n&f&lYour ban expires in " + banDurationString;
         banMessage += "\n&fYour ban ID: " + banId;

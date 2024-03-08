@@ -2,6 +2,7 @@ package me.fodded.core.managers.stats.operators;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
 import me.fodded.core.Core;
 import me.fodded.core.model.Database;
 import org.bson.Document;
@@ -56,15 +57,28 @@ public class DatabaseOperations {
                 .getMongoDatabase(Database.STATISTICS_DB)
                 .getCollection("BansHistory");
 
-        Document foundDocument = collection.find(Filters.eq("uniqueId", uniqueId)).first();
+        Document foundDocument = collection
+                .find(Filters.eq("uniqueId", uniqueId.toString()))
+                .sort(Sorts.descending("banTimeStamp"))
+                .first();
+
         if(foundDocument == null) {
             return false;
         }
 
-        return foundDocument.getLong("time") + foundDocument.getLong("duration") > System.currentTimeMillis();
+        return foundDocument.getLong("banTimeStamp") + foundDocument.getLong("banDuration") > System.currentTimeMillis();
     }
 
+    public Document getPlayerBanDocument(UUID uniqueId) {
+        MongoCollection<Document> collection = Core.getInstance().getDatabase()
+                .getMongoDatabase(Database.STATISTICS_DB)
+                .getCollection("BansHistory");
 
+        return collection
+                .find(Filters.eq("uniqueId", uniqueId.toString()))
+                .sort(Sorts.descending("banTimeStamp"))
+                .first();
+    }
 
 
     /*
