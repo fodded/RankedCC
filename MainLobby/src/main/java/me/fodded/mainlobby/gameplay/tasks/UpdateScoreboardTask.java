@@ -1,6 +1,6 @@
-package me.fodded.skywarslobby.tasks;
+package me.fodded.mainlobby.gameplay.tasks;
 
-import me.fodded.skywarslobby.gameplay.scoreboard.SkywarsLobbyScoreboard;
+import me.fodded.mainlobby.gameplay.scoreboard.MainLobbyScoreboard;
 import me.fodded.spigotcore.gameplay.scoreboard.AbstractScoreboard;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -11,7 +11,7 @@ public class UpdateScoreboardTask extends BukkitRunnable {
 
     public UpdateScoreboardTask(Player player) {
         this.player = player;
-        new SkywarsLobbyScoreboard(player.getUniqueId());
+        new MainLobbyScoreboard(player.getUniqueId());
     }
 
     @Override

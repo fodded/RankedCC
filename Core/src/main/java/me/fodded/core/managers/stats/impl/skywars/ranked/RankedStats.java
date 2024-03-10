@@ -12,12 +12,12 @@ public class RankedStats {
     private final UUID uuid;
     private long timePlayed;
 
-    private int wins, kills, losses, deaths, selectedKit;
+    private int wins, kills, losses, deaths, selectedKitId;
     private List<RankedSeasonStats> rankedSeasonStatsList = new LinkedList<>();
 
     public RankedStats(UUID uuid) {
         this.uuid = uuid;
-        this.selectedKit = 1;
+        this.selectedKitId = 1;
         rankedSeasonStatsList.add(new RankedSeasonStats(uuid));
     }
 
@@ -27,6 +27,10 @@ public class RankedStats {
                 return rankedSeasonStats;
             }
         }
-        return null;
+
+        RankedSeasonStats rankedSeasonStats = new RankedSeasonStats(uuid);
+        rankedSeasonStatsList.add(rankedSeasonStats);
+
+        return rankedSeasonStats;
     }
 }

@@ -1,4 +1,4 @@
-package me.fodded.skywarslobby.listeners;
+package me.fodded.skywarslobby.gameplay.listeners;
 
 import me.fodded.skywarslobby.managers.SkywarsLobbyPlayer;
 import me.fodded.spigotcore.SpigotCore;

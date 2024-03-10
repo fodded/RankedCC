@@ -28,6 +28,7 @@ public class BanCommand extends Command {
         }
 
         String bannedPlayerName = args[0];
+
         DatabaseOperations databaseOperations = DatabaseOperations.getInstance();
 
         UUID bannedPlayerUniqueId = databaseOperations.getUniqueIdFromName(bannedPlayerName);

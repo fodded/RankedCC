@@ -1,6 +1,6 @@
-package me.fodded.skywarslobby.listeners;
+package me.fodded.mainlobby.gameplay.listeners;
 
-import me.fodded.skywarslobby.managers.SkywarsLobbyPlayer;
+import me.fodded.mainlobby.managers.MainLobbyPlayer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -52,7 +52,7 @@ public class PlayerActionListener implements Listener {
         Player player = event.getPlayer();
         Material material = event.getMaterial();
 
-        SkywarsLobbyPlayer skywarsLobbyPlayer = SkywarsLobbyPlayer.getLobbyPlayer(player.getUniqueId());
-        skywarsLobbyPlayer.openGui(material);
+        MainLobbyPlayer mainLobbyPlayer = MainLobbyPlayer.getLobbyPlayer(player.getUniqueId());
+        mainLobbyPlayer.openGui(material);
     }
 }

@@ -1,16 +1,12 @@
-package me.fodded.mainlobby.managers;
+package me.fodded.rankedskywars.managers;
 
 import lombok.Getter;
 import me.fodded.core.Core;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
-import me.fodded.mainlobby.Main;
-import me.fodded.mainlobby.gameplay.guis.CosmeticsGui;
-import me.fodded.mainlobby.gameplay.guis.LobbySelectorGui;
-import me.fodded.mainlobby.gameplay.guis.MinigamesGui;
-import me.fodded.mainlobby.gameplay.guis.settings.SettingsGui;
-import me.fodded.mainlobby.gameplay.scoreboard.MainLobbyScoreboard;
-import me.fodded.mainlobby.gameplay.tasks.UpdateScoreboardTask;
+import me.fodded.rankedskywars.Main;
+import me.fodded.rankedskywars.gameplay.scoreboard.RankedSkywarsScoreboard;
+import me.fodded.rankedskywars.gameplay.tasks.UpdateScoreboardTask;
 import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.gameplay.disguise.DisguiseManager;
 import me.fodded.spigotcore.gameplay.player.AbstractServerPlayer;
@@ -30,9 +26,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Getter
-public class MainLobbyPlayer extends AbstractServerPlayer {
+public class RankedSkywarsPlayer extends AbstractServerPlayer {
 
-    public MainLobbyPlayer(UUID uniqueId) {
+    public RankedSkywarsPlayer(UUID uniqueId) {
         super(uniqueId);
         addPlayerToCache();
     }
@@ -58,7 +54,7 @@ public class MainLobbyPlayer extends AbstractServerPlayer {
     }
 
     public void handleQuit() {
-        MainLobbyScoreboard mainLobbyScoreboard = (MainLobbyScoreboard) MainLobbyScoreboard.getScoreboardManager(getUniqueId());
+        RankedSkywarsScoreboard mainLobbyScoreboard = (RankedSkywarsScoreboard) RankedSkywarsScoreboard.getScoreboardManager(getUniqueId());
         if(mainLobbyScoreboard != null) {
             mainLobbyScoreboard.removeScoreboard();
         }
@@ -88,7 +84,7 @@ public class MainLobbyPlayer extends AbstractServerPlayer {
 
     private void updateVisibilityForEveryone() {
         for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
-            MainLobbyPlayer lobbyPlayer = getLobbyPlayer(eachPlayer.getUniqueId());
+            RankedSkywarsPlayer lobbyPlayer = getLobbyPlayer(eachPlayer.getUniqueId());
             lobbyPlayer.updateVisibility();
         }
     }
@@ -127,18 +123,6 @@ public class MainLobbyPlayer extends AbstractServerPlayer {
         GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
 
         switch(holdingMaterial) {
-            case FIREWORK_CHARGE:
-                new LobbySelectorGui(player);
-                break;
-            case MAGMA_CREAM:
-                new MinigamesGui(player);
-                break;
-            case BLAZE_POWDER:
-                new CosmeticsGui(player);
-                break;
-            case GOLD_NUGGET:
-                new SettingsGui(player);
-                break;
             case GOLDEN_CARROT:
                 if(isFlooding()) {
                     return;
@@ -213,10 +197,10 @@ public class MainLobbyPlayer extends AbstractServerPlayer {
         return text.replace("%visibility%", generalStats.isPlayersVisibility() ? "Visible" : "Hidden");
     }
 
-    public static MainLobbyPlayer getLobbyPlayer(UUID uniqueId) {
+    public static RankedSkywarsPlayer getLobbyPlayer(UUID uniqueId) {
         if(isInCache(uniqueId)) {
-            return (MainLobbyPlayer) AbstractServerPlayer.getPlayerFromList(uniqueId);
+            return (RankedSkywarsPlayer) AbstractServerPlayer.getPlayerFromList(uniqueId);
         }
-        return new MainLobbyPlayer(uniqueId);
+        return new RankedSkywarsPlayer(uniqueId);
     }
 }

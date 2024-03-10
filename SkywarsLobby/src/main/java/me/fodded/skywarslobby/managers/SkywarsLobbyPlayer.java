@@ -10,7 +10,7 @@ import me.fodded.skywarslobby.gameplay.guis.LobbySelectorGui;
 import me.fodded.skywarslobby.gameplay.guis.MinigamesGui;
 import me.fodded.skywarslobby.gameplay.guis.settings.SettingsGui;
 import me.fodded.skywarslobby.gameplay.scoreboard.SkywarsLobbyScoreboard;
-import me.fodded.skywarslobby.tasks.UpdateScoreboardTask;
+import me.fodded.skywarslobby.gameplay.tasks.UpdateScoreboardTask;
 import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.gameplay.disguise.DisguiseManager;
 import me.fodded.spigotcore.gameplay.player.AbstractServerPlayer;

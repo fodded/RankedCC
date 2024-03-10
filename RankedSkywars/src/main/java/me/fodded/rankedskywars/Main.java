@@ -1,11 +1,11 @@
-package me.fodded.mainlobby;
+package me.fodded.rankedskywars;
 
 import lombok.Getter;
 import me.fodded.core.Core;
-import me.fodded.mainlobby.gameplay.commands.SetLobbyCommand;
-import me.fodded.mainlobby.gameplay.listeners.PlayerActionListener;
-import me.fodded.mainlobby.gameplay.listeners.PlayerConnectListener;
-import me.fodded.mainlobby.gameplay.listeners.WorldListener;
+import me.fodded.rankedskywars.gameplay.commands.CreateMapCommand;
+import me.fodded.rankedskywars.gameplay.listeners.PlayerActionListener;
+import me.fodded.rankedskywars.gameplay.listeners.PlayerConnectListener;
+import me.fodded.rankedskywars.gameplay.listeners.WorldListener;
 import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.configs.ConfigLoader;
 import me.fodded.spigotcore.gameplay.chat.ChatManager;
@@ -30,7 +30,7 @@ public class Main extends JavaPlugin {
         SpigotCore.getInstance().initializeListeners();
 
         CommandManager.getInstance().initializeCommands();
-        CommandManager.getInstance().addCommand(new SetLobbyCommand());
+        CommandManager.getInstance().addCommand(new CreateMapCommand());
 
         FileConfiguration config = ConfigLoader.getInstance().getConfig("core-config.yml");
         SpigotCore.getInstance().initializeRedis(config);

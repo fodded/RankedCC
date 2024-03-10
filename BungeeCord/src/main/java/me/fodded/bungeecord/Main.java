@@ -13,10 +13,7 @@ import me.fodded.bungeecord.commands.friends.messages.MessageCommand;
 import me.fodded.bungeecord.commands.friends.messages.ReplyCommand;
 import me.fodded.bungeecord.commands.ignore.IgnoreCommand;
 import me.fodded.bungeecord.listeners.PlayerConnectListener;
-import me.fodded.bungeecord.redislisteners.PlayerConnectedToProxyListener;
-import me.fodded.bungeecord.redislisteners.SendLogsToPlayerListener;
-import me.fodded.bungeecord.redislisteners.SendPlayerToLobbyListener;
-import me.fodded.bungeecord.redislisteners.UpdateStatisticsCacheListener;
+import me.fodded.bungeecord.redislisteners.*;
 import me.fodded.core.Core;
 import me.fodded.proxycore.ProxyCore;
 import me.fodded.proxycore.configs.ConfigLoader;
@@ -87,6 +84,11 @@ public class Main extends Plugin {
         RTopic updateStatisticsCache = Core.getInstance().getRedis().getRedissonClient().getTopic("updateStatisticsCache");
         updateStatisticsCache.addListener(String.class, (channel, msg) -> {
             new UpdateStatisticsCacheListener().onMessage(channel, msg);
+        });
+
+        RTopic banPlayer = Core.getInstance().getRedis().getRedissonClient().getTopic("banPlayer");
+        banPlayer.addListener(String.class, (channel, msg) -> {
+            new BanPlayerListener().onMessage(channel, msg);
         });
     }
 

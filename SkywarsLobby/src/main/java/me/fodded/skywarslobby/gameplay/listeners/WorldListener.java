@@ -1,4 +1,4 @@
-package me.fodded.skywarslobby.listeners;
+package me.fodded.skywarslobby.gameplay.listeners;
 
 import me.fodded.spigotcore.utils.ServerLocations;
 import org.bukkit.entity.Player;

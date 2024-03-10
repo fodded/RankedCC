@@ -1,4 +1,4 @@
-package me.fodded.mainlobby.listeners;
+package me.fodded.mainlobby.gameplay.listeners;
 
 import me.fodded.spigotcore.utils.ServerLocations;
 import org.bukkit.entity.Player;

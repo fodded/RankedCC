@@ -1,4 +1,4 @@
-package me.fodded.mainlobby.tasks;
+package me.fodded.rankedskywars.gameplay.tasks;
 
 import me.fodded.mainlobby.gameplay.scoreboard.MainLobbyScoreboard;
 import me.fodded.spigotcore.gameplay.scoreboard.AbstractScoreboard;
