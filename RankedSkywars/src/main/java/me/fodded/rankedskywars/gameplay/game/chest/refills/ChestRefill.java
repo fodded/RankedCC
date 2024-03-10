@@ -1,6 +1,6 @@
 package me.fodded.rankedskywars.gameplay.game.chest.refills;
 
-import me.fodded.rankedskywars.gameplay.game.chest.ChestAction;
+import me.fodded.rankedskywars.gameplay.game.chest.action.ChestAction;
 import org.bukkit.inventory.Inventory;
 
 public interface ChestRefill extends ChestAction {

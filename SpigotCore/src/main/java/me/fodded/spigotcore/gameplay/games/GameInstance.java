@@ -14,6 +14,8 @@ public abstract class GameInstance implements IGame {
 
     private final UUID gameId;
 
+    private int gameGoingTimeSeconds;
+
     private GameState currentGameState;
     private GameMap gameMap;
 
@@ -26,6 +28,7 @@ public abstract class GameInstance implements IGame {
 
     public GameInstance() {
         gameId = UUID.randomUUID();
+        GameManager.getInstance().initializeNewGame(this);
     }
 
     public abstract int getMaxPlayers();
@@ -44,11 +47,16 @@ public abstract class GameInstance implements IGame {
         }
     }
 
-    private GameState getNextGameState(GameState currentGameState) {
+    public GameState getNextGameState(GameState currentGameState) {
         int currentIndex = gameStateList.indexOf(currentGameState);
         if (currentIndex == -1 || currentIndex == gameStateList.size() - 1) {
             return currentGameState;
         }
         return gameStateList.get(currentIndex + 1);
+    }
+
+    public List<GameState> getPreviousGameStates(GameState currentGameState) {
+        int currentIndex = gameStateList.indexOf(currentGameState);
+        return gameStateList.subList(0, currentIndex);
     }
 }

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static me.fodded.rankedskywars.gameplay.game.chest.utils.ChestUtils.*;
+import static me.fodded.rankedskywars.gameplay.game.chest.action.utils.ChestUtils.*;
 
 public class IslandChestRefill implements ChestRefill {
 

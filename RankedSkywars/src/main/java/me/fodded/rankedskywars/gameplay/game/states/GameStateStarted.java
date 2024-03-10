@@ -1,6 +1,6 @@
 package me.fodded.rankedskywars.gameplay.game.states;
 
-import me.fodded.rankedskywars.gameplay.game.chest.ChestActionManager;
+import me.fodded.rankedskywars.gameplay.game.chest.action.ChestActionManager;
 import me.fodded.spigotcore.gameplay.games.GameInstance;
 import me.fodded.spigotcore.gameplay.games.state.GameState;
 

@@ -1,6 +1,7 @@
-package me.fodded.rankedskywars.gameplay.game.chest;
+package me.fodded.rankedskywars.gameplay.game.chest.action;
 
 import me.fodded.rankedskywars.gameplay.game.RankedSkywarsGame;
+import me.fodded.rankedskywars.gameplay.game.chest.GameChestType;
 import me.fodded.rankedskywars.gameplay.game.chest.fills.ChestFill;
 import me.fodded.rankedskywars.gameplay.game.chest.fills.IslandChestFill;
 import me.fodded.rankedskywars.gameplay.game.chest.fills.MiddleChestFill;

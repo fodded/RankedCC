@@ -1,6 +1,7 @@
 package me.fodded.spigotcore.gameplay.games;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -8,6 +9,7 @@ import java.util.Set;
 @Data
 public class GameManager {
 
+    @Getter
     private static final Set<GameInstance> allCurrentGames = new HashSet<>();
     private static GameManager instance;
 
@@ -17,6 +19,10 @@ public class GameManager {
 
     public void initializeNewGame(GameInstance gameInstance) {
         allCurrentGames.add(gameInstance);
+    }
+
+    public void removeGameInstance(GameInstance gameInstance) {
+        allCurrentGames.remove(gameInstance);
     }
 
     public static GameManager getInstance() {

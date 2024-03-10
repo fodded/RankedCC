@@ -1,4 +1,4 @@
-package me.fodded.rankedskywars.gameplay.game.chest.utils;
+package me.fodded.rankedskywars.gameplay.game.chest.action.utils;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;

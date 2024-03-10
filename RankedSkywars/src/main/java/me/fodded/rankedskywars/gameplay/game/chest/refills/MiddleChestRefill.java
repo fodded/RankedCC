@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static me.fodded.rankedskywars.gameplay.game.chest.utils.ChestUtils.*;
+import static me.fodded.rankedskywars.gameplay.game.chest.action.utils.ChestUtils.*;
 
 public class MiddleChestRefill implements ChestRefill {
 

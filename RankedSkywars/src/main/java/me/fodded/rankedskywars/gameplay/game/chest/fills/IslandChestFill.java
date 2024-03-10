@@ -1,6 +1,6 @@
 package me.fodded.rankedskywars.gameplay.game.chest.fills;
 
-import me.fodded.rankedskywars.gameplay.game.chest.utils.ChestUtils;
+import me.fodded.rankedskywars.gameplay.game.chest.action.utils.ChestUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static me.fodded.rankedskywars.gameplay.game.chest.utils.ChestUtils.*;
+import static me.fodded.rankedskywars.gameplay.game.chest.action.utils.ChestUtils.*;
 
 public class IslandChestFill implements ChestFill {
 

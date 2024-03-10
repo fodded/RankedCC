@@ -4,21 +4,21 @@ import lombok.Getter;
 import me.fodded.core.Core;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
-import me.fodded.rankedskywars.Main;
 import me.fodded.rankedskywars.gameplay.scoreboard.RankedSkywarsScoreboard;
-import me.fodded.rankedskywars.gameplay.tasks.UpdateScoreboardTask;
-import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.gameplay.disguise.DisguiseManager;
+import me.fodded.spigotcore.gameplay.games.GameInstance;
+import me.fodded.spigotcore.gameplay.games.GameManager;
 import me.fodded.spigotcore.gameplay.player.AbstractServerPlayer;
 import me.fodded.spigotcore.languages.LanguageManager;
 import me.fodded.spigotcore.utils.ItemUtils;
-import me.fodded.spigotcore.utils.ServerLocations;
 import me.fodded.spigotcore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.redisson.api.RTopic;
 
 import java.util.List;
@@ -41,22 +41,13 @@ public class RankedSkywarsPlayer extends AbstractServerPlayer {
 
         updateDisguise();
         resetPlayerAbilities();
-        setItemsToPlayerInventory();
-        updateVisibilityForEveryone();
-
-        UpdateScoreboardTask updateScoreboardTask = new UpdateScoreboardTask(player);
-        updateScoreboardTask.runTaskTimer(SpigotCore.getInstance().getPlugin(), 0, 20L);
-
-        GeneralStatsDataManager.getInstance().applyChangeToRedis(
-                getUniqueId(),
-                generalStats -> generalStats.setLastLobby(SpigotCore.getInstance().getServerName())
-        );
+        updateVisibility();
     }
 
     public void handleQuit() {
-        RankedSkywarsScoreboard mainLobbyScoreboard = (RankedSkywarsScoreboard) RankedSkywarsScoreboard.getScoreboardManager(getUniqueId());
-        if(mainLobbyScoreboard != null) {
-            mainLobbyScoreboard.removeScoreboard();
+        RankedSkywarsScoreboard rankedSkywarsScoreboard = (RankedSkywarsScoreboard) RankedSkywarsScoreboard.getScoreboardManager(getUniqueId());
+        if(rankedSkywarsScoreboard != null) {
+            rankedSkywarsScoreboard.removeScoreboard();
         }
 
         removePlayerFromList();
@@ -77,16 +68,25 @@ public class RankedSkywarsPlayer extends AbstractServerPlayer {
 
     public void resetPlayerAbilities() {
         Player player = Bukkit.getPlayer(getUniqueId());
-        player.teleport(ServerLocations.getInstance().getLobbyLocation());
-        player.setAllowFlight(true); // needed for double jump
-        player.setGameMode(GameMode.ADVENTURE);
-    }
+        player.setGameMode(GameMode.SURVIVAL);
 
-    private void updateVisibilityForEveryone() {
-        for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
-            RankedSkywarsPlayer lobbyPlayer = getLobbyPlayer(eachPlayer.getUniqueId());
-            lobbyPlayer.updateVisibility();
+        player.setMaxHealth(20.0);
+        player.setHealth(20.0);
+        player.setFoodLevel(20);
+        player.setExhaustion(0.0f);
+        player.setExp(0.0f);
+        player.setLevel(0);
+        player.setAllowFlight(false);
+        player.setFireTicks(0);
+        player.closeInventory();
+        player.spigot().setCollidesWithEntities(true);
+
+        for (PotionEffect pe : player.getActivePotionEffects()) {
+            player.removePotionEffect(pe.getType());
         }
+
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(new ItemStack[4]);
     }
 
     public void setItemsToPlayerInventory() {
@@ -98,8 +98,8 @@ public class RankedSkywarsPlayer extends AbstractServerPlayer {
         Configuration languageConfig = LanguageManager.getInstance().getLanguageConfig(getUniqueId());
         for(String path : languageConfig.getConfigurationSection("player-items").getKeys(false)) {
             int slot = Integer.parseInt(path) - 1;
-            String displayName = getVisibilityStatus(languageConfig.getString("player-items." + path + ".name"));
-            Material material = getVisibilityMaterial(languageConfig.getString("player-items." + path + ".material"));
+            String displayName = "";
+            Material material = null;
             List<String> descriptionList = languageConfig.getStringList("player-items." + path + ".description");
 
             player.getInventory().setItem(
@@ -110,57 +110,21 @@ public class RankedSkywarsPlayer extends AbstractServerPlayer {
     }
 
     public void updateVisibility() {
-        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
-        if(generalStats.isPlayersVisibility()) {
-            showPlayers();
-        } else {
-            hidePlayers();
+        Player player = Bukkit.getPlayer(getUniqueId());
+        for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
+            if(eachPlayer.getWorld() != player.getWorld()) {
+                eachPlayer.hidePlayer(player);
+                player.hidePlayer(eachPlayer);
+            } else {
+                eachPlayer.showPlayer(player);
+                player.showPlayer(eachPlayer);
+            }
         }
     }
 
     public void openGui(Material holdingMaterial) {
         Player player = Bukkit.getPlayer(getUniqueId());
         GeneralStatsDataManager generalStatsDataManager = GeneralStatsDataManager.getInstance();
-
-        switch(holdingMaterial) {
-            case GOLDEN_CARROT:
-                if(isFlooding()) {
-                    return;
-                }
-                generalStatsDataManager.applyChangeToRedis(getUniqueId(), generalStats -> generalStats.setPlayersVisibility(false));
-                hidePlayers();
-                Bukkit.getScheduler().runTaskLater(Main.getInstance(), this::setItemsToPlayerInventory, 2);
-                break;
-            case CARROT_ITEM:
-                if(isFlooding()) {
-                    return;
-                }
-                generalStatsDataManager.applyChangeToRedis(getUniqueId(), generalStats -> generalStats.setPlayersVisibility(true));
-                showPlayers();
-                Bukkit.getScheduler().runTaskLater(Main.getInstance(), this::setItemsToPlayerInventory, 2);
-                break;
-        }
-    }
-
-    private void hidePlayers() {
-        Player player = Bukkit.getPlayer(getUniqueId());
-        for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
-            player.hidePlayer(eachPlayer);
-        }
-    }
-
-    private void showPlayers() {
-        Player player = Bukkit.getPlayer(getUniqueId());
-        for(Player eachPlayer : Bukkit.getOnlinePlayers()) {
-            GeneralStats eachPlayerGeneralStats = GeneralStatsDataManager.getInstance().getCachedValue(eachPlayer.getUniqueId());
-
-            // we do not show hidden staff to a player unless it's another staff member
-            if(!eachPlayerGeneralStats.isVanished() || player.isOp()) {
-                player.showPlayer(eachPlayer);
-            } else if(eachPlayerGeneralStats.isVanished()) {
-                player.hidePlayer(eachPlayer);
-            }
-        }
     }
 
     // We publish the information to redis and then catch it from bungee side
@@ -178,23 +142,12 @@ public class RankedSkywarsPlayer extends AbstractServerPlayer {
         player.sendMessage(message);
     }
 
-    private Material getVisibilityMaterial(String text) {
-        if(!text.contains("/")) {
-            return Material.getMaterial(text);
-        }
-
-        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
-        String[] arr = text.split("/");
-
-        if(generalStats.isPlayersVisibility()) {
-            return Material.getMaterial(arr[0]);
-        }
-        return Material.getMaterial(arr[1]);
-    }
-
-    private String getVisibilityStatus(String text) {
-        GeneralStats generalStats = GeneralStatsDataManager.getInstance().getCachedValue(getUniqueId());
-        return text.replace("%visibility%", generalStats.isPlayersVisibility() ? "Visible" : "Hidden");
+    private GameInstance getCurrentGame() {
+        return GameManager.getAllCurrentGames().stream()
+                .filter(gameInstance -> gameInstance.getAlivePlayersList().contains(getUniqueId()) ||
+                        gameInstance.getSpectatorPlayersList().contains(getUniqueId()))
+                .findFirst()
+                .orElse(null);
     }
 
     public static RankedSkywarsPlayer getLobbyPlayer(UUID uniqueId) {

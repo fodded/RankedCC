@@ -45,4 +45,8 @@ public class StringUtils {
         String message = StringUtils.format(LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString(configMessageKey));
         player.sendMessage(message + extraMessage);
     }
+
+    public static String getMessage(Player player, String configMessageKey) {
+        return LanguageManager.getInstance().getLanguageConfig(player.getUniqueId()).getString(configMessageKey);
+    }
 }

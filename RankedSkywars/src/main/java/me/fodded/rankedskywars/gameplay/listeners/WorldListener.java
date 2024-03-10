@@ -9,7 +9,6 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 public class WorldListener implements Listener {
@@ -52,10 +51,5 @@ public class WorldListener implements Listener {
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
         event.setCancelled(event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.CUSTOM);
-    }
-
-    @EventHandler
-    public void onPlayerPickUp(PlayerPickupItemEvent event) {
-        event.setCancelled(true);
     }
 }
