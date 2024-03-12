@@ -5,9 +5,7 @@ import me.fodded.spigotcore.gameplay.games.map.GameMap;
 import me.fodded.spigotcore.gameplay.games.state.GameState;
 import me.fodded.spigotcore.gameplay.games.state.IGame;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 public abstract class GameInstance implements IGame {
@@ -19,12 +17,12 @@ public abstract class GameInstance implements IGame {
     private GameState currentGameState;
     private GameMap gameMap;
 
-    private final List<GameState> gameStateList = new LinkedList<>();
+    private final List<GameState> gameStatesList = new ArrayList<>();
     private String gameMapDisplayName;
 
-    private final List<UUID> initialPlayersList = new LinkedList<>();
-    private final List<UUID> alivePlayersList = new LinkedList<>();
-    private final List<UUID> spectatorPlayersList = new LinkedList<>();
+    private final Set<UUID> initialPlayersList = new HashSet<>();
+    private final Set<UUID> alivePlayersList = new HashSet<>();
+    private final Set<UUID> spectatorPlayersList = new HashSet<>();
 
     public GameInstance() {
         gameId = UUID.randomUUID();
@@ -35,7 +33,7 @@ public abstract class GameInstance implements IGame {
     public abstract int getMinPlayers();
 
     public void registerGameState(GameState gameState) {
-        gameStateList.add(gameState);
+        gameStatesList.add(gameState);
     }
 
     public void switchToNextGameState() {
@@ -48,15 +46,27 @@ public abstract class GameInstance implements IGame {
     }
 
     public GameState getNextGameState(GameState currentGameState) {
-        int currentIndex = gameStateList.indexOf(currentGameState);
-        if (currentIndex == -1 || currentIndex == gameStateList.size() - 1) {
+        int currentIndex = gameStatesList.indexOf(currentGameState);
+        if (currentIndex == -1 || currentIndex == gameStatesList.size() - 1) {
             return currentGameState;
         }
-        return gameStateList.get(currentIndex + 1);
+        return gameStatesList.get(currentIndex + 1);
     }
 
     public List<GameState> getPreviousGameStates(GameState currentGameState) {
-        int currentIndex = gameStateList.indexOf(currentGameState);
-        return gameStateList.subList(0, currentIndex);
+        int currentIndex = gameStatesList.indexOf(currentGameState);
+        return gameStatesList.subList(0, currentIndex);
+    }
+
+    public boolean isPlayerAlive(UUID playerUniqueId) {
+        return alivePlayersList.contains(playerUniqueId);
+    }
+
+    public boolean isPlayerSpectator(UUID playerUniqueId) {
+        return spectatorPlayersList.contains(playerUniqueId);
+    }
+
+    public boolean isPlayerPresentInGame(UUID playerUniqueId) {
+        return alivePlayersList.contains(playerUniqueId) || spectatorPlayersList.contains(playerUniqueId);
     }
 }

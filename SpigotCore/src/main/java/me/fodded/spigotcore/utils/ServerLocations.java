@@ -5,6 +5,7 @@ import lombok.Setter;
 import me.fodded.spigotcore.configs.ConfigLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 
 @Setter
@@ -31,6 +32,16 @@ public class ServerLocations {
                 Float.parseFloat(config.getString("lobby-location.yaw")),
                 Float.parseFloat(config.getString("lobby-location.pitch"))
         ).clone();
+    }
+
+    public static Location deserializeLocation(World world, String serializedLocation) {
+        Location location = new Location(
+                world,
+                Double.parseDouble(serializedLocation.split(",")[0]),
+                Double.parseDouble(serializedLocation.split(",")[1]),
+                Double.parseDouble(serializedLocation.split(",")[2])
+        );
+        return location.clone();
     }
 }
 

@@ -4,42 +4,65 @@ import lombok.Getter;
 import me.fodded.rankedskywars.gameplay.game.chest.GameChest;
 import me.fodded.rankedskywars.gameplay.game.chest.GameChestType;
 import me.fodded.rankedskywars.gameplay.game.states.*;
+import me.fodded.rankedskywars.gameplay.game.tracker.GameDamageTracker;
+import me.fodded.rankedskywars.gameplay.game.tracker.GameKillTracker;
+import me.fodded.rankedskywars.gameplay.game.tracker.GamePlayerStatisticsTracker;
 import me.fodded.rankedskywars.gameplay.tasks.UpdateScoreboardTask;
 import me.fodded.spigotcore.SpigotCore;
 import me.fodded.spigotcore.gameplay.games.GameInstance;
 import me.fodded.spigotcore.gameplay.games.map.GameMap;
 import me.fodded.spigotcore.gameplay.games.map.GameMapConfig;
+import me.fodded.spigotcore.utils.ServerLocations;
 import me.fodded.spigotcore.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public class RankedSkywarsGame extends GameInstance {
 
-    private final Map<GameChestType, Set<Location>> gameChestMap;
-    private Location lobbyLocation;
+    private final String gameMapName;
 
-    private RankedSkywarsGame(String gameMapPathName) {
+    private final Map<UUID, GamePlayerStatisticsTracker> gamePlayerStatisticsTrackerMap = new HashMap<>();
+    private Map<GameChestType, Set<Location>> gameChestMap = new HashMap<>();
+    private final Set<Location> gameCagesSet = new HashSet<>();
+
+    private final GameKillTracker gameKillTracker;
+    private final GameDamageTracker gameDamageTracker;
+
+    private Location waitingLobbyLocation;
+
+    private RankedSkywarsGame(String gameMapName) {
         super();
+        this.gameMapName = gameMapName;
 
-        FileConfiguration config = GameMapConfig.getInstance().getGameInfo();
-
-        setGameMapDisplayName(config.getString(gameMapPathName + ".displayName"));
-        setGameMap(new GameMap(config.getString(gameMapPathName + ".world")));
+        gameKillTracker = new GameKillTracker(this);
+        gameDamageTracker = new GameDamageTracker(this);
 
         registerAllGameStates();
-        setCurrentGameState(getGameStateList().get(0));
+        initializeGame();
+    }
 
-        gameChestMap = GameChest.getGameChestMap(
-                getGameMap().getWorld(),
-                getGameMap() + ".chests"
-        );
+    @Override
+    public void initializeGame() {
+        FileConfiguration config = GameMapConfig.getInstance().getGameInfo();
+
+        setGameMapDisplayName(config.getString(gameMapName + ".displayName"));
+        setGameMap(new GameMap(config.getString(gameMapName + ".world")));
+
+        initializeGameChests();
+        initializeWaitingLobbyLocation();
+        initializeGameCagesLocations();
+
+        setCurrentGameState(getGameStatesList().get(0));
+    }
+
+    @Override
+    public void stopGame() {
+
     }
 
     @Override
@@ -57,9 +80,20 @@ public class RankedSkywarsGame extends GameInstance {
         updateScoreboardTask.runTaskTimer(SpigotCore.getInstance().getPlugin(), 0, 20L);
 
         sendPlayerJoinedMessage(player);
+        gamePlayerStatisticsTrackerMap.put(player.getUniqueId(), new GamePlayerStatisticsTracker(this));
     }
 
-    private void sendPlayerJoinedMessage(Player player) {
+    private void registerAllGameStates() {
+        registerGameState(new GameStateQueuing(this));
+        registerGameState(new GameStateStarting(this));
+        registerGameState(new GameStateStarted(this));
+        registerGameState(new GameStateFirstRefill(this));
+        registerGameState(new GameStateSecondRefill(this));
+        registerGameState(new GameStateDoom(this));
+        registerGameState(new GameStateEnd(this));
+    }
+
+    public void sendPlayerJoinedMessage(Player player) {
         for(UUID uuid : getAlivePlayersList()) {
             Player eachPlayer = Bukkit.getPlayer(uuid);
             if(eachPlayer != null) {
@@ -72,7 +106,7 @@ public class RankedSkywarsGame extends GameInstance {
         }
     }
 
-    private void sendPlayerLeftMessage(Player player) {
+    public void sendPlayerLeftMessage(Player player) {
         for(UUID uuid : getAlivePlayersList()) {
             Player eachPlayer = Bukkit.getPlayer(uuid);
             if(eachPlayer != null) {
@@ -84,24 +118,28 @@ public class RankedSkywarsGame extends GameInstance {
         }
     }
 
-    @Override
-    public void initializeGame() {
-
+    private void initializeGameChests() {
+        gameChestMap = GameChest.getGameChestMap(
+                getGameMap().getWorld(),
+                getGameMap() + ".chests"
+        );
     }
 
-    @Override
-    public void stopGame() {
+    private void initializeWaitingLobbyLocation() {
+        FileConfiguration config = GameMapConfig.getInstance().getGameInfo();
+        String waitingLobbySerializedLocation = config.getString(getGameMap() + ".waitinglobbylocation");
 
+        waitingLobbyLocation = ServerLocations.deserializeLocation(getGameMap().getWorld(), waitingLobbySerializedLocation);
     }
 
-    private void registerAllGameStates() {
-        registerGameState(new GameStateQueuing(this));
-        registerGameState(new GameStateStarting(this));
-        registerGameState(new GameStateStarted(this));
-        registerGameState(new GameStateFirstRefill(this));
-        registerGameState(new GameStateSecondRefill(this));
-        registerGameState(new GameStateDoom(this));
-        registerGameState(new GameStateEnd(this));
+    private void initializeGameCagesLocations() {
+        FileConfiguration config = GameMapConfig.getInstance().getGameInfo();
+        List<String> gameCagesSerializedLocations = config.getStringList(getGameMap() + ".cageslocations");
+
+        for(String serializedLocation : gameCagesSerializedLocations) {
+            Location deserializeLocation = ServerLocations.deserializeLocation(getGameMap().getWorld(), serializedLocation);
+            gameCagesSet.add(deserializeLocation);
+        }
     }
 
     @Override

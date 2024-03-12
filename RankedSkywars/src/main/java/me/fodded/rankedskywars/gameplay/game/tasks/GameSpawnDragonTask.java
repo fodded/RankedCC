@@ -18,7 +18,7 @@ public class GameSpawnDragonTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        gameInstance.getGameMap().getWorld().spawnEntity(gameInstance.getLobbyLocation().clone(), EntityType.ENDER_DRAGON);
+        gameInstance.getGameMap().getWorld().spawnEntity(gameInstance.getWaitingLobbyLocation().clone(), EntityType.ENDER_DRAGON);
         for (UUID uuid : gameInstance.getAlivePlayersList()) {
             Player player = Bukkit.getPlayer(uuid);
             if(player != null) {

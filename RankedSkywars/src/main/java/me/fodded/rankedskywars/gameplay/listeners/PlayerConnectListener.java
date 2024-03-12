@@ -33,7 +33,7 @@ public class PlayerConnectListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        RankedSkywarsPlayer lobbyPlayer = RankedSkywarsPlayer.getLobbyPlayer(event.getPlayer().getUniqueId());
+        RankedSkywarsPlayer lobbyPlayer = RankedSkywarsPlayer.getRankedSkywarsPlayer(event.getPlayer().getUniqueId());
         lobbyPlayer.handleQuit();
     }
 }

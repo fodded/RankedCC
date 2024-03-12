@@ -1,12 +1,11 @@
 package me.fodded.rankedskywars.managers;
 
-import lombok.Getter;
 import me.fodded.core.Core;
 import me.fodded.core.managers.stats.impl.profile.GeneralStats;
 import me.fodded.core.managers.stats.impl.profile.GeneralStatsDataManager;
+import me.fodded.rankedskywars.gameplay.game.RankedSkywarsGame;
 import me.fodded.rankedskywars.gameplay.scoreboard.RankedSkywarsScoreboard;
 import me.fodded.spigotcore.gameplay.disguise.DisguiseManager;
-import me.fodded.spigotcore.gameplay.games.GameInstance;
 import me.fodded.spigotcore.gameplay.games.GameManager;
 import me.fodded.spigotcore.gameplay.player.AbstractServerPlayer;
 import me.fodded.spigotcore.languages.LanguageManager;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@Getter
 public class RankedSkywarsPlayer extends AbstractServerPlayer {
 
     public RankedSkywarsPlayer(UUID uniqueId) {
@@ -142,15 +140,15 @@ public class RankedSkywarsPlayer extends AbstractServerPlayer {
         player.sendMessage(message);
     }
 
-    private GameInstance getCurrentGame() {
-        return GameManager.getAllCurrentGames().stream()
+    public RankedSkywarsGame getCurrentGame() {
+        return (RankedSkywarsGame) GameManager.getAllCurrentGames().stream()
                 .filter(gameInstance -> gameInstance.getAlivePlayersList().contains(getUniqueId()) ||
                         gameInstance.getSpectatorPlayersList().contains(getUniqueId()))
                 .findFirst()
                 .orElse(null);
     }
 
-    public static RankedSkywarsPlayer getLobbyPlayer(UUID uniqueId) {
+    public static RankedSkywarsPlayer getRankedSkywarsPlayer(UUID uniqueId) {
         if(isInCache(uniqueId)) {
             return (RankedSkywarsPlayer) AbstractServerPlayer.getPlayerFromList(uniqueId);
         }

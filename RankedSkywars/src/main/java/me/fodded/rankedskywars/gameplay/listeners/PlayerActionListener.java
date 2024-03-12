@@ -14,7 +14,7 @@ public class PlayerActionListener implements Listener {
         Player player = event.getPlayer();
         Material material = event.getMaterial();
 
-        RankedSkywarsPlayer mainLobbyPlayer = RankedSkywarsPlayer.getLobbyPlayer(player.getUniqueId());
+        RankedSkywarsPlayer mainLobbyPlayer = RankedSkywarsPlayer.getRankedSkywarsPlayer(player.getUniqueId());
         mainLobbyPlayer.openGui(material);
     }
 }

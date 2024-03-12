@@ -2,6 +2,7 @@ package me.fodded.rankedskywars.gameplay.game.chest;
 
 import lombok.Getter;
 import me.fodded.spigotcore.gameplay.games.map.GameMapConfig;
+import me.fodded.spigotcore.utils.ServerLocations;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -34,7 +35,7 @@ public class GameChest {
             Set<Location> gameChestLocationsSet = new HashSet<>();
 
             for(String serializedChestLocation : chestTypeLocations) {
-                Location location = deserializeLocation(world, serializedChestLocation);
+                Location location = ServerLocations.deserializeLocation(world, serializedChestLocation);
                 gameChestLocationsSet.add(location);
             }
 
@@ -42,15 +43,5 @@ public class GameChest {
             gameChestMap.put(gameChestType, gameChestLocationsSet);
         }
         return gameChestMap;
-    }
-
-    private static Location deserializeLocation(World world, String serializedLocation) {
-        Location location = new Location(
-                world,
-                Double.parseDouble(serializedLocation.split(",")[0]),
-                Double.parseDouble(serializedLocation.split(",")[1]),
-                Double.parseDouble(serializedLocation.split(",")[2])
-        );
-        return location.clone();
     }
 }
